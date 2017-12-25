@@ -7,3 +7,46 @@
 #6 look at the high ranking as well as the low ranking
 #7 table for the symmetric ignoring
 
+
+
+#MAIN<<
+function biasesESC(startYear = 1980, endYr = 1990)
+
+    #load data
+    dataParse()
+    
+    #check params
+    paramCheck(startYear, endYr)
+    
+end
+
+
+#fn to iterate over the ESC datafiles
+function dataParse()
+    resultsFile = readdir("./dataTables/")
+    yrMin = 100000
+    yrMax = -1
+    for rf in resultsFile
+        
+        
+    end
+
+
+end
+
+
+
+
+
+#fn to accept the parameters and check for the validity
+function paramCheck(startYear, endYr)
+    if(startYear >= endYr)
+        println("the start year needs to be before the end year")
+        return -1
+    end
+    if((startYear+4) >= endYr)
+        println("the start year needs to be at least 4 years prior the end year")
+    end
+    
+    
+end
