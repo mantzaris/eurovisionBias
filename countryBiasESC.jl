@@ -9,7 +9,7 @@
 
 
 
-#MAIN<<
+#>>MAIN<<
 function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5)
 
     #load data and get the dictionary for the country num per year
@@ -19,12 +19,13 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5)
     paramCheck(startYr, endYr, windowSize, yrMin, yrMax)
 
     #simulate scores to create a distribution
-    windowDist = scoreSimDist()
+    windowDist = scoreSimDist(startYr, endYr, windowSize, countryYearsNum)
     
 end
 
 
-function scoreSimDist()
+#return the year windows of distributions for scores
+function scoreSimDist(startYr, endYr, windowSize, countryYearsNum)
 
     #Generate NULL distribution for each set of years in the windows
     windowDist = Dict() #hold the distribution of the scores
@@ -34,15 +35,107 @@ function scoreSimDist()
         #simulate the scores for the dist
         distTmp = scoreSim(yr,yr+windowSize,countryYearsNum)
         yr = yr + windowSize
-        windowConf[string(yr-windowSize,"-",yr)] = distTmp
+        windowDist[string(yr-windowSize,"-",yr)] = distTmp
     end
     
     return windowDist
 end
 
 
+#simulate the score distribution for each window span provided
+function scoreSim(startYr,endYr,countryYearsNum)
+    println("$startYr,$endYr,countryYearsNum")
+    AVG_SIMULATION = []
+    iterNum = 1#2500
+    for ii = 1:iterNum
+        ONE_SIMULATION = []
+        for yr = startYr:endYr
+            NUM = countryYearsNum[yr]
+	    if(yr >= 1975 || yr == 1963 || yr == 1962)
+                
+                score = Allocated(yr,NUM)
+                println("$yr,$NUM,$score")
+            elseif( (1964<=yr<= 1966) || yr==1974 || (1967<=yr<=1970) || (1957<=yr<=1961))
+                score = Sequential(yr,NUM)
+            elseif(1971<=yr<=1973)
+                score = Rated(yr,NUM)
+            else
+                score = Allocated(-1,NUM)
+            end
+            append!(ONE_SIMULATION,[score])
+            println("ONE_SIMULATION, $ONE_SIMULATION")
+        end
+        avgSim = mean(ONE_SIMULATION)
+        append!(AVG_SIMULATION,[avgSim])
+        println("avg sim,$AVG_SIMULATION")
+    end
+    println("out of loop")
+    sortedAVG_SIMULATION = sort(AVG_SIMULATION,rev=true)
+
+    return -1
+end 
 
 
+
+#here each country can receive a set of scores with consecutive points awarded
+#in sequence for that year it has an equal chance of receiving each score
+function Sequential(yr,NUM)
+    SCORES1 = [5,3,1]
+    SCORES2 = ones(Int,1,10)
+    score = 0    
+    if(1964 <= yr <= 1966)
+        for ii=1:length(SCORES1)         
+            position = ceil.(rand(1,1)*NUM)
+            if((Int.(position))[1] == 1)               
+                score = SCORES1[ii] + score            
+            end                                        
+        end
+    elseif(yr==1974 || (1967<=yr<=1970) || (1957<=yr<=1961))
+        for ii=1:length(SCORES2)
+            position = ceil.(rand(1,1)*NUM)
+            if((Int.(position))[1] == 1)
+                score = SCORES2[ii] + score
+            end                                        
+        end
+    end
+    return score
+    
+end
+
+function Allocated(yr,NUM)
+    SCORES1 = [3,2,1]
+    SCORES2 = [5,4,3,2,1]
+    SCORES3 = [12,10,8,7,6,5,4,3,2,1]
+    position = ceil.(rand(1,1)*NUM)
+    println(position)
+    if(yr >= 1975 && yr <= 2016)
+        SCORES = SCORES3
+    elseif(yr == 1962)
+        SCORES = SCORES1
+    elseif(yr == 1963)
+        SCORES = SCORES2
+    else
+        SCORES = SCORES3
+    end    
+    if(position[1] <= length(SCORES))
+        score = SCORES[Int.(position)]	       
+    else
+        score = 0
+    end
+    return score
+end
+
+function Rated(yr,NUM)
+    SCORES1 = [5,4,3,2,1]
+    if(1971<=yr<=1973)
+        X1 = SCORES1[rand(1:end)]
+        X2 = SCORES1[rand(1:end)]
+    else
+        return -1
+    end
+    score = X1 + X2
+    return score
+end
 
 #get the years of the data provided and country number in each year
 function dataCountryYearsNum()
