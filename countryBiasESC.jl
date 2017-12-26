@@ -18,14 +18,30 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5)
     #check params
     paramCheck(startYr, endYr, windowSize, yrMin, yrMax)
 
+    #simulate scores to create a distribution
+    windowDist = scoreSimDist()
+    
+end
+
+
+function scoreSimDist()
+
     #Generate NULL distribution for each set of years in the windows
-    windowDist = Dict()
+    windowDist = Dict() #hold the distribution of the scores
     yr = startYr
     while( (yr+windowSize) <= endYr )
         #each window is a null dist unique due to the voting schemes
+        #simulate the scores for the dist
+        distTmp = scoreSim(yr,yr+windowSize,countryYearsNum)
         yr = yr + windowSize
+        windowConf[string(yr-windowSize,"-",yr)] = distTmp
     end
+    
+    return windowDist
 end
+
+
+
 
 
 #get the years of the data provided and country number in each year
