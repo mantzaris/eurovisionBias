@@ -10,15 +10,21 @@
 
 
 #MAIN<<
-function biasesESC(startYear = 1980, endYr = 1990)
+function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5)
 
     #load data and get the dictionary for the country num per year
     countryYearsNum, yrMin, yrMax = dataCountryYearsNum()
     
     #check params
-    paramCheck(startYear, endYr, yrMin, yrMax)
-    println("$startYear, $endYr, $yrMin, $yrMax")
-    println(countryYearsNum)
+    paramCheck(startYr, endYr, windowSize, yrMin, yrMax)
+
+    #Generate NULL distribution for each set of years in the windows
+    windowDist = Dict()
+    yr = startYr
+    while( (yr+windowSize) <= endYr )
+        #each window is a null dist unique due to the voting schemes
+        yr = yr + windowSize
+    end
 end
 
 
@@ -49,7 +55,7 @@ end
 
 
 #fn to accept the parameters and check for the validity
-function paramCheck(startYr, endYr, yrMin, yrMax)
+function paramCheck(startYr, endYr, windowSize, yrMin, yrMax)
     if(startYr >= endYr)
         println("the start year needs to be before the end year")
         quit()
@@ -61,6 +67,10 @@ function paramCheck(startYr, endYr, yrMin, yrMax)
     #sanity check input years
     if( endYr < startYr || startYr < yrMin || endYr > yrMax )
         print(string("year range improperly set, for the analysis end year must be greater than start and the smallest year is $(yrMin) and largest $(yrMax) with smallest first"))
+        quit()
+    end
+    if( (startYr+windowSize) > endYr)
+        print("not enough years between start and end for analysis due to window size")
         quit()
     end
       
