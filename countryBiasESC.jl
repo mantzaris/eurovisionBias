@@ -44,17 +44,15 @@ end
 
 #simulate the score distribution for each window span provided
 function scoreSim(startYr,endYr,countryYearsNum)
-    println("$startYr,$endYr,countryYearsNum")
     AVG_SIMULATION = []
-    iterNum = 1#2500
+    iterNum = 2000
     for ii = 1:iterNum
         ONE_SIMULATION = []
         for yr = startYr:endYr
             NUM = countryYearsNum[yr]
-	    if(yr >= 1975 || yr == 1963 || yr == 1962)
-                
-                score = Allocated(yr,NUM)
-                println("$yr,$NUM,$score")
+	    if(yr >= 1975 || yr == 1963 || yr == 1962)       
+                score = Allocated(yr,NUM);
+
             elseif( (1964<=yr<= 1966) || yr==1974 || (1967<=yr<=1970) || (1957<=yr<=1961))
                 score = Sequential(yr,NUM)
             elseif(1971<=yr<=1973)
@@ -62,17 +60,15 @@ function scoreSim(startYr,endYr,countryYearsNum)
             else
                 score = Allocated(-1,NUM)
             end
-            append!(ONE_SIMULATION,[score])
-            println("ONE_SIMULATION, $ONE_SIMULATION")
-        end
-        avgSim = mean(ONE_SIMULATION)
-        append!(AVG_SIMULATION,[avgSim])
-        println("avg sim,$AVG_SIMULATION")
-    end
-    println("out of loop")
-    sortedAVG_SIMULATION = sort(AVG_SIMULATION,rev=true)
+            append!(ONE_SIMULATION,score);
 
-    return -1
+        end
+        avgSim = mean(ONE_SIMULATION);
+        append!(AVG_SIMULATION,avgSim);
+    end
+    sortedAVG_SIMULATION = sort(AVG_SIMULATION,rev=false)
+
+    return sortedAVG_SIMULATION
 end 
 
 
@@ -107,7 +103,6 @@ function Allocated(yr,NUM)
     SCORES2 = [5,4,3,2,1]
     SCORES3 = [12,10,8,7,6,5,4,3,2,1]
     position = ceil.(rand(1,1)*NUM)
-    println(position)
     if(yr >= 1975 && yr <= 2016)
         SCORES = SCORES3
     elseif(yr == 1962)
