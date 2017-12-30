@@ -20,7 +20,7 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, tailSide = "upp
 
     #simulate scores to create a distribution
     windowDist = scoreSimDist(startYr, endYr, windowSize, countryYearsNum)
-
+    println(windowDist)
     #get confidence intervals for the lower or upper end
     windowConf = windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alpha)
     
@@ -39,12 +39,13 @@ function windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alph
     while( (yr+windowSize) <= endYr )
         #each window is a null dist unique due to the voting schemes
         #simulate the scores for the dist
-        distTmp = windowDist[string(yr-windowSize,"-",yr)]
+        distTmp = windowDist[string(yr,"-",yr+windowSize)]
         sampleSize = length(distTmp)
         confIndAlpha =  max(1,floor(Int,alpha*sampleSize))
         confalpha = distTmp[confIndAlpha]
+       
+        windowConf[string(yr,"-",yr+windowSize)] = confalpha
         yr = yr + windowSize
-        windowConf[string(yr-windowSize,"-",yr)] = confalpha
     end
     
     return windowConf
@@ -62,9 +63,9 @@ function scoreSimDist(startYr, endYr, windowSize, countryYearsNum)
     while( (yr+windowSize) <= endYr )
         #each window is a null dist unique due to the voting schemes
         #simulate the scores for the dist
-        distTmp = scoreSim(yr,yr+windowSize,countryYearsNum)
+        distTmp = scoreSim(yr,yr+windowSize,countryYearsNum)     
+        windowDist[string(yr,"-",yr+windowSize)] = distTmp
         yr = yr + windowSize
-        windowDist[string(yr-windowSize,"-",yr)] = distTmp
     end
     
     return windowDist
