@@ -10,18 +10,47 @@
 
 
 #>>MAIN<<
-function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5)
+function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, tailSide = "upper", alpha = 0.05)
 
     #load data and get the dictionary for the country num per year
     countryYearsNum, yrMin, yrMax = dataCountryYearsNum()
     
     #check params
-    paramCheck(startYr, endYr, windowSize, yrMin, yrMax)
+    paramCheck(startYr, endYr, windowSize, yrMin, yrMax,tailSide)
 
     #simulate scores to create a distribution
     windowDist = scoreSimDist(startYr, endYr, windowSize, countryYearsNum)
+
+    #get confidence intervals for the lower or upper end
+    windowConf = windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alpha)
     
 end
+
+
+#return the year windows' confidence interval values specified
+function windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alpha)
+
+    if(tailSide == "upper" || tailSide == "right")
+        alpha = 1 - alpha
+    end
+    
+    windowConf = Dict() #hold the distribution of the scores
+    yr = startYr
+    while( (yr+windowSize) <= endYr )
+        #each window is a null dist unique due to the voting schemes
+        #simulate the scores for the dist
+        distTmp = windowDist[string(yr-windowSize,"-",yr)]
+        sampleSize = length(distTmp)
+        confIndAlpha =  max(1,floor(Int,alpha*sampleSize))
+        confalpha = distTmp[confIndAlpha]
+        yr = yr + windowSize
+        windowConf[string(yr-windowSize,"-",yr)] = confalpha
+    end
+    
+    return windowConf
+    
+end
+
 
 
 #return the year windows of distributions for scores
@@ -66,7 +95,7 @@ function scoreSim(startYr,endYr,countryYearsNum)
         avgSim = mean(ONE_SIMULATION);
         append!(AVG_SIMULATION,avgSim);
     end
-    sortedAVG_SIMULATION = sort(AVG_SIMULATION,rev=false)
+    sortedAVG_SIMULATION = sort(AVG_SIMULATION,rev=false)#returns low to high
 
     return sortedAVG_SIMULATION
 end 
@@ -159,7 +188,7 @@ end
 
 
 #fn to accept the parameters and check for the validity
-function paramCheck(startYr, endYr, windowSize, yrMin, yrMax)
+function paramCheck(startYr, endYr, windowSize, yrMin, yrMax, tailSide)
     if(startYr >= endYr)
         println("the start year needs to be before the end year")
         quit()
@@ -177,5 +206,10 @@ function paramCheck(startYr, endYr, windowSize, yrMin, yrMax)
         print("not enough years between start and end for analysis due to window size")
         quit()
     end
-      
+    println(tailSide)
+    if(!(tailSide != "upper" || tailSide != "right" || tailSide != "lower" || tailSide != "left"))
+        println("define the tailside with either \"upper\" / \"lower\" / \"right\" / \"left\" ")
+        exit()
+    end
+    
 end
