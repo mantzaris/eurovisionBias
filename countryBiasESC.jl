@@ -24,6 +24,7 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, tailSide = "upp
     #get confidence intervals for the lower or upper end
     windowConf = windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alpha)
     
+    #We need to have the CSV data read
 end
 
 

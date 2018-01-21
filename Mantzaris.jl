@@ -73,7 +73,7 @@ function countryCollusion(stYr,endYr,windowSize,windowConf,winDicts)
 		if(scorematAVG[ii,jj] >= threshold)
 		    c1 = cntryNames[ii]
 		    c2 = cntryNames[jj]
-		    prev = collusionDict["1way:$(yr)-$(yr + windowSize)"]		    
+		    prev = collusionDict["1way:$(yr)-$(yr + windowSize)"]	    
 		    new = append!(prev, ["$(c1)-$(c2)"])
 		    collusionDict["1way:$(yr)-$(yr + windowSize)"] = new
 		end
@@ -122,8 +122,8 @@ function windowScores(stYr,endYr,windowSize)
     scoresDict = Dict()
     for rf in resultsFile   
 	yrTmp = parse(Int,((split(rf,"."))[1]))   
-	fileTmp = open(string("./dataTables/",rf))                     #each file pipe
-	linesTmp = readlines(fileTmp)                            #read each file lines
+	fileTmp = open(string("./dataTables/",rf))#each file pipe
+	linesTmp = readlines(fileTmp)#read each file lines
 	origColNames = split(linesTmp[1],r",|\n",keep=false) #store the COL name list of the columns
         #print(origColNames);print("\n")
 	splice!(origColNames,1) #remove first entry
