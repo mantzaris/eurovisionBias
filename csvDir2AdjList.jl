@@ -2,33 +2,34 @@
 
 
 #look at the directory and load every .csv file, then produce a final matrix which is the countryFrom|countryTo|year|score
-function totalScoreAdjList()
-    
+function totalScoreAdjList()   
     dirFiles = readdir("./dataTables/")
-    adjList = Array{Any}(1,4)
-    
-    
-    
+    adjMatScore = []
+    ind = 1
     for dF in dirFiles
         yrTmp = parse(Int,((split(dF,"."))[1]))
         
         fileTmp = open(string("./dataTables/",dF))
         linesTmp = readlines(fileTmp)#read each file lines
-        origColNames = split(linesTmp[1],r",|\n",keep=false)#get line1 into components
+        origColNames = split(linesTmp[1],r",|\n",keep=false)#get line1 into components      
         for ii=2:length(linesTmp)#get the names on the rows
             rowTmp = split(linesTmp[ii],r",|\n",keep=false)
             for jj=2:length(origColNames)
-                rowTmp[]
-            end
-            
+                if(ii!=jj)
+                    #print("$(rowTmp[1])->$(origColNames[jj])=$(rowTmp[jj]),")
+                    if(isempty(adjMatScore) == true)
+                        adjMatScore = Array{Any}(1,4)
+                        adjMatScore[1,:] = [rowTmp[1],origColNames[jj],yrTmp,parse(Int,rowTmp[jj])]
+                    else
+                        #println([rowTmp[1],origColNames[jj],yrTmp,parse(Int,rowTmp[jj])])
+                        adjMatScore = vcat(adjMatScore , [rowTmp[1] origColNames[jj] yrTmp parse(Int,rowTmp[jj])])
+                    end                    
+                end                
+            end            
         end
-        totalNamesYr = sort(unique(append!(rowNAMES,origColNames)))#for yrTmp names
-        namesDict[yrTmp] = totalNamesYr#
-        
+       
     end
-    return namesDict
-    
-    
+    return adjMatScore   
 end
 
 
