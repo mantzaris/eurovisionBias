@@ -4,7 +4,11 @@
 2 Check the parameters: paramCheck() -> all the variable values supplied are valid
 3 Simulate the null unbiases score distribution in a simulation: scoreSimDist -> Given the full range of years and interval/windowSize return the low2high score accumulation for each interval in a dictionary: windowDist[string(yr,"-",yr+windowSize)]
 4 using the scoreSim dictionary of ranked list of sampled scores, return the threshold for each window as a dictionary -> windowConf[string(yr,"-",yr+windowSize)] = confalpha
+5 
 =#
+
+#csvDir2AdjList.jl is the file with functions to call upon the real data to get the aggregates
+include("csvDir2AdjList.jl")
 
 #>>MAIN<<
 function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, tailSide = "upper", alpha = 0.05)
@@ -24,8 +28,15 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, tailSide = "upp
     #get confidence intervals for the lower or upper end
     #using the scoresim, get a dictionary for the threshold of significances: dictionary -> windowConf[string(yr,"-",yr+windowSize)] = confalpha
     windowConf = windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alpha)
+
     
-    #We need to have the CSV data read
+    #Now we must obtain the averages for each country from to country (we need to have the CSV data read)
+    #
+    totalAdjL = windowDictScoreAdjList(startYr, endYr, windowSize)
+
+    #produce the 
+    
+    
 end
 
 
