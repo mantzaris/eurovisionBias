@@ -1,27 +1,28 @@
 #GOALS
-#1 examine biases over a set of years because many things change
-#2 compare the biases and rank them
-#3 look for consistency in the bias distribution
-#4 plot the bias ranking for countries as they appear in time series
-#5 plot percentage of accumulated score of bias
-#6 look at the high ranking as well as the low ranking
-#7 table for the symmetric ignoring
-
-
+#=
+1 Get the range of the dataset: dataCountryYearsNum() -> #looks at the whole dataset of score files and reads the header to return a dictionary for the year->countrynumber, min year, max year
+2 Check the parameters: paramCheck() -> all the variable values supplied are valid
+3 Simulate the null unbiases score distribution in a simulation: scoreSimDist -> Given the full range of years and interval/windowSize return the low2high score accumulation for each interval in a dictionary: windowDist[string(yr,"-",yr+windowSize)]
+4 using the scoreSim dictionary of ranked list of sampled scores, return the threshold for each window as a dictionary -> windowConf[string(yr,"-",yr+windowSize)] = confalpha
+=#
 
 #>>MAIN<<
 function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, tailSide = "upper", alpha = 0.05)
 
     #load data and get the dictionary for the country num per year
+    #looks at the whole dataset of score files and reads the header to return a dictionary for the year->countrynumber, min year, max year
     countryYearsNum, yrMin, yrMax = dataCountryYearsNum()
     
     #check params
     paramCheck(startYr, endYr, windowSize, yrMin, yrMax,tailSide)
 
     #simulate scores to create a distribution
+    #return the low2high score accumulation for each interval in a dictionary: windowDist[string(yr,"-",yr+windowSize)]
     windowDist = scoreSimDist(startYr, endYr, windowSize, countryYearsNum)
     println(windowDist)
+
     #get confidence intervals for the lower or upper end
+    #using the scoresim, get a dictionary for the threshold of significances: dictionary -> windowConf[string(yr,"-",yr+windowSize)] = confalpha
     windowConf = windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alpha)
     
     #We need to have the CSV data read
@@ -29,6 +30,7 @@ end
 
 
 #return the year windows' confidence interval values specified
+#using the scoreSim dictionary of ranked list of sampled scores, return the threshold for each window as a dictionary -> windowConf[string(yr,"-",yr+windowSize)] = confalpha
 function windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alpha)
 
     if(tailSide == "upper" || tailSide == "right")
@@ -56,6 +58,7 @@ end
 
 
 #return the year windows of distributions for scores
+#Given the full range of years and interval/windowSize return the low2high score accumulation for each interval in a dictionary: windowDist[string(yr,"-",yr+windowSize)]
 function scoreSimDist(startYr, endYr, windowSize, countryYearsNum)
 
     #Generate NULL distribution for each set of years in the windows
@@ -164,6 +167,7 @@ function Rated(yr,NUM)
 end
 
 #get the years of the data provided and country number in each year
+#looks at the whole dataset of score files and reads the header to return a dictionary for the year->countrynumber, min year, max year
 function dataCountryYearsNum()
     countryYearsNum = Dict{Integer,Integer}()
     resultsFile = readdir("./dataTables/")
