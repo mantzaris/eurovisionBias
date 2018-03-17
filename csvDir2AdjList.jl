@@ -23,13 +23,26 @@ end
 
 #produce the aggregate score for the 'to-and-from' from the adjacency list so that we have the unique pairings and total scores
 function aggregateAdjList(startYr = 1980, endYr = 1990)
-    
+
     adjList = yearsScoreAdjList(startYr, endYr)
     cntryNames = subsetCountryNamesArray(startYr,endYr)
     countryNum = length(cntryNames)
-    aggregateAdjList = Array{Any}(countryNum^2 - countryNum, countryNum^2 - countryNum)
+    aggregateAdjList = Array{Any}(countryNum^2 - countryNum, 3)
+    #fill the names and initial aggregate scores
+    tmpRow = 1
+    for ii in 1:length(cntryNames) #over each first cycle of countries
+        for jj in 1:length(cntryNames) #over second cycle of countries
+            if(ii != jj)
+                
+                aggregateAdjList[tmpRow,:] = [cntryNames[ii] cntryNames[jj] 0]
+                tmpRow = tmpRow + 1
+            end
+                        
+        end
+        
+    end
     
-    
+    return aggregateAdjList
 end
 
 
@@ -114,7 +127,7 @@ function subsetCountryNamesArray(stYr,endYr)
         totalNamesTmp = countryNamesYrDict[yearTmp]
         append!(totalNames,totalNamesTmp)
     end
-    return unique(totalNames)
+    return sort(unique(totalNames))
     
 end
 
