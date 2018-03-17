@@ -12,7 +12,7 @@ function windowsDictScoreAdjList(startYr = 1980, endYr = 1990, windowSize = 5)
     while( (yr+windowSize) <= endYr )
 	winDict["$(yr)-$(yr+windowSize)"] = Dict()
 	winDict["$(yr)-$(yr+windowSize)"]["countries"] =  subsetCountryNamesArray(startYr,endYr)
-	#winDict["$(yr)-$(yr+windowSize)"]["scoreAdjList"] = []
+	winDict["$(yr)-$(yr+windowSize)"]["scoreAdjList"] = aggregateAdjList(startYr,endYr)
 	yr = yr + windowSize
     end
 
@@ -40,23 +40,13 @@ function aggregateAdjList(startYr = 1980, endYr = 1990)
     end
     #FILL: the scores for the AdjList
     adjListTotal = yearsScoreAdjList(startYr, endYr)
-    for ii in 1:size(aggregateAdjList,1)#look at every country pair
-        
-        for rowInd in 1:size(adjListTotal,1)
-            
+    for ii in 1:size(aggregateAdjList,1)#look at every country pair        
+        for rowInd in 1:size(adjListTotal,1)            
             if((aggregateAdjList[ii,1]==adjListTotal[rowInd,1]) && (aggregateAdjList[ii,2]==adjListTotal[rowInd,2]))
-
                 aggregateAdjList[ii,3] = aggregateAdjList[ii,3] + adjListTotal[rowInd,4]
-
-            end
-                            
-        end
-        
-
+            end                            
+        end       
     end
-    
-
-    
     return aggregateAdjList
 end
 
