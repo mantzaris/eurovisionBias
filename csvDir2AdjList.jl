@@ -3,18 +3,35 @@
 
 #Given the total time interval, and windowSize, produce a dictionary for each window
 #Returned is a dictionary for the time windows
+#"countries" key is the unique list of country names for that window
+#
 function windowsDictScoreAdjList(startYr = 1980, endYr = 1990, windowSize = 5)
 
     winDict = Dict()
-    yr = stYr
+    yr = startYr
     while( (yr+windowSize) <= endYr )
 	winDict["$(yr)-$(yr+windowSize)"] = Dict()
-	winDict["$(yr)-$(yr+windowSize)"]["countries"] =  subsetCountryNamesArray(stYr,endYr)
-	winDict["$(yr)-$(yr+windowSize)"]["scoremat"] = []
+	winDict["$(yr)-$(yr+windowSize)"]["countries"] =  subsetCountryNamesArray(startYr,endYr)
+	#winDict["$(yr)-$(yr+windowSize)"]["scoremat"] = []
 	yr = yr + windowSize
     end
 
+    return winDict
 end
+
+
+
+#produce the aggregate score for the 'to-and-from' from the adjacency list so that we have the unique pairings and total scores
+function aggregateAdjList(startYr = 1980, endYr = 1990)
+    
+    adjList = yearsScoreAdjList(startYr, endYr)
+    cntryNames = subsetCountryNamesArray(startYr,endYr)
+    countryNum = length(cntryNames)
+    aggregateAdjList = Array{Any}(countryNum^2 - countryNum, countryNum^2 - countryNum)
+    
+    
+end
+
 
 
 
