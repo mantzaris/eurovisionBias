@@ -12,7 +12,7 @@ function windowsDictScoreAdjList(startYr = 1980, endYr = 1990, windowSize = 5)
     while( (yr+windowSize) <= endYr )
 	winDict["$(yr)-$(yr+windowSize)"] = Dict()
 	winDict["$(yr)-$(yr+windowSize)"]["countries"] =  subsetCountryNamesArray(startYr,endYr)
-	#winDict["$(yr)-$(yr+windowSize)"]["scoremat"] = []
+	#winDict["$(yr)-$(yr+windowSize)"]["scoreAdjList"] = []
 	yr = yr + windowSize
     end
 
@@ -28,19 +28,34 @@ function aggregateAdjList(startYr = 1980, endYr = 1990)
     cntryNames = subsetCountryNamesArray(startYr,endYr)
     countryNum = length(cntryNames)
     aggregateAdjList = Array{Any}(countryNum^2 - countryNum, 3)
-    #fill the names and initial aggregate scores
+    #INIT: fill the names and initial aggregate scores
     tmpRow = 1
     for ii in 1:length(cntryNames) #over each first cycle of countries
         for jj in 1:length(cntryNames) #over second cycle of countries
-            if(ii != jj)
-                
+            if(ii != jj)                
                 aggregateAdjList[tmpRow,:] = [cntryNames[ii] cntryNames[jj] 0]
                 tmpRow = tmpRow + 1
+            end                    
+        end        
+    end
+    #FILL: the scores for the AdjList
+    adjListTotal = yearsScoreAdjList(startYr, endYr)
+    for ii in 1:size(aggregateAdjList,1)#look at every country pair
+        
+        for rowInd in 1:size(adjListTotal,1)
+            
+            if((aggregateAdjList[ii,1]==adjListTotal[rowInd,1]) && (aggregateAdjList[ii,2]==adjListTotal[rowInd,2]))
+
+                aggregateAdjList[ii,3] = aggregateAdjList[ii,3] + adjListTotal[rowInd,4]
+
             end
-                        
+                            
         end
         
+
     end
+    
+
     
     return aggregateAdjList
 end
@@ -48,7 +63,7 @@ end
 
 
 
-#look at the directory and load every year in the range of the .csv files, then produce a final matrix which is the countryFrom|countryTo|year|score for this 'subset'
+#look at the directory and load every year in the range of the .csv files, then produce a final matrix(adjacency list) which is every year in the countryFrom|countryTo|year|score for this 'subset'
 function yearsScoreAdjList(startYr = 1980, endYr = 1990)
     dirFiles = readdir("./dataTables/")
     adjMatScore = []
