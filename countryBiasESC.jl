@@ -11,33 +11,43 @@
 include("csvDir2AdjList.jl")
 
 #>>MAIN<<
-function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, tailSide = "upper", alpha = 0.05)
+function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
 
     #load data and get the dictionary for the country num per year
     #looks at the whole dataset of score files and reads the header to return a dictionary for the year->countrynumber, min year, max year
     countryYearsNum, yrMin, yrMax = dataCountryYearsNum()
     
     #check params
-    paramCheck(startYr, endYr, windowSize, yrMin, yrMax,tailSide)
+    paramCheck(startYr, endYr, windowSize, yrMin, yrMax)
 
     #simulate scores to create a distribution
     #return the low2high score accumulation for each interval in a dictionary: windowDist[string(yr,"-",yr+windowSize)]
     windowDist = scoreSimDist(startYr, endYr, windowSize, countryYearsNum)
     #println(windowDist)
 
+    #first the upper
+    tailSide = "upper"
     #get confidence intervals for the lower or upper end
     #using the scoresim, get a dictionary for the threshold of significances: dictionary -> windowConf[string(yr,"-",yr+windowSize)] = confalpha
     windowConf = windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alpha)
     
     #Now we must obtain the averages for each country from to country (we need to have the CSV data read)
-    #return the dictionary of the time windows and the aggregate adjacency list of scores
+    #return the dictionary of the time windows and the aggregate adjacency list of scores, country names, average scores aggregates for each window, and the thresholds of when the average surpasses the alpha value for significance. keys: "countries" "thresholdSigAdjList" "avgScoreAggregateAdjList" "scoreAggregateAdjList"
     winAggDict = windowsDictThresholdsAdjList(windowConf, 1980, 1990, 5)
-    #winAggDict = windowsDictScoreAdjList(startYr, endYr, windowSize)
 
-    #alter the window aggregate dictionary to include an average country score adjacency list,
+    #To reduce computations later on, we now add to the dictionary a key to the total threshold surpassings as a count for the set of windows (1 per window significance) and get the total country name list for the full time period each window covers
+    winAggDict = dictTotalThresholdsAdjListWindowCount(winAggDict,startYr,endYr,windowSize)
+
+    #same as above but now for the lower end of the distribution
+    tailSide = "lower"
+    windowConfLower = windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alpha)
+    winAggDictLower = windowsDictThresholdsAdjList(windowConfLower, 1980, 1990, 5)
+    winAggDictLower = dictTotalThresholdsAdjListWindowCount(winAggDictLower,startYr,endYr,windowSize)
+
     
     
-    return winAggDict
+    
+    return winAggDictLower
 end
 
 
@@ -50,6 +60,12 @@ function windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alph
     end
     
     windowConf = Dict() #hold the distribution of the scores
+    if(tailSide == "upper"  || tailSide == "right")
+        windowConf["tailSide"] = "upper"
+    else
+        windowConf["tailSide"] = "lower"
+    end
+            
     yr = startYr
     while( (yr+windowSize) <= endYr )
         #each window is a null dist unique due to the voting schemes
@@ -58,7 +74,7 @@ function windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alph
         sampleSize = length(distTmp)
         confIndAlpha =  max(1,floor(Int,alpha*sampleSize))
         confalpha = distTmp[confIndAlpha]
-       
+        
         windowConf[string(yr,"-",yr+windowSize)] = confalpha
         yr = yr + windowSize
     end
@@ -206,7 +222,7 @@ end
 
 
 #fn to accept the parameters and check for the validity
-function paramCheck(startYr, endYr, windowSize, yrMin, yrMax, tailSide)
+function paramCheck(startYr, endYr, windowSize, yrMin, yrMax)
     if(startYr >= endYr)
         println("the start year needs to be before the end year")
         quit()
@@ -223,11 +239,6 @@ function paramCheck(startYr, endYr, windowSize, yrMin, yrMax, tailSide)
     if( (startYr+windowSize) > endYr)
         print("not enough years between start and end for analysis due to window size")
         quit()
-    end
-    println(tailSide)
-    if(!(tailSide != "upper" || tailSide != "right" || tailSide != "lower" || tailSide != "left"))
-        println("define the tailside with either \"upper\" / \"lower\" / \"right\" / \"left\" ")
-        exit()
     end
     
 end

@@ -1,12 +1,49 @@
 #Doing things another way, even if not better, not over thinking this, which is not what a programming mindset is supposed to do, but jumping in.
 
 
+#produce a key which counts the total number of significant counts for each pair across the windows were found
+function dictTotalThresholdsAdjListWindowCount(winAggDict,startYr,endYr,windowSize)
+    #a new dictionary which is non-windows
+    #winDictTotal = Dict()
+    
+    #create the structure of the adjacency list where we will add the counts found to for each pair
+    #produce an initialized country pairing adjacency list for the threshold passings, the window interval is not used, as we need the full country pairings, not the window subset
+    thresholdSignificantAdjListTOTAL = initCountryPairAdjList(startYr,endYr)
+    
+    #loop through the keys of the Dict to add the significant pairs to the 
+    yr = startYr
+    while( (yr+windowSize) <= endYr )
+        
+        threshSigAdjListTMP = winAggDict["$(yr)-$(yr+windowSize)"]["thresholdSigAdjList"]
+        for rowIndWin in 1:size(threshSigAdjListTMP,1)#look through every pairing in this window
+            for rowIndTotal in 1:size(thresholdSignificantAdjListTOTAL,1)
+                if((thresholdSignificantAdjListTOTAL[rowIndTotal,1] == threshSigAdjListTMP[rowIndWin,1]) && (thresholdSignificantAdjListTOTAL[rowIndTotal,2] == threshSigAdjListTMP[rowIndWin,2]))
+                    thresholdSignificantAdjListTOTAL[rowIndTotal,3] += threshSigAdjListTMP[rowIndWin,3]
+                end
+                
+            end
+            
+        end
+        
+    	yr = yr + windowSize
+    end      
+    
+    #add the accumulated significance total to the dictionary
+    winAggDict["thresholdSignificantAdjListTOTAL"] = thresholdSignificantAdjListTOTAL
 
+    #also add the full total country pairing name list for the window set
+    winAggDict["countriesNamesTotal"] = subsetCountryNamesArray(startYr,endYr)
+
+    return winAggDict
+end
+
+
+#use the windowConf dictionary which has the threshold values for significance of the average values to determine for each window which country pairings were significant in a new window key 'thresholdSignificantAdjList'
 function windowsDictThresholdsAdjList(windowConf, startYr = 1980, endYr = 1990, windowSize = 5)
     #from the csv data build the dictionary for the basic information on the country pair lists, aggregate scores and average of the aggregate scores
     winAggDict = windowsDictScoreAdjList(startYr, endYr, windowSize)
-    println(keys(winAggDict["1980-1985"]))#["1980-1985"]["countries"])
-    println(winAggDict["1980-1985"]["avgScoreAggregateAdjList"])
+    #println(keys(winAggDict["1980-1985"]))#["1980-1985"]["countries"])
+    #println(winAggDict["1980-1985"]["avgScoreAggregateAdjList"])
     #windowConf is a dictionary with the window keys as winDicts here, and each window has a particular threshold
     #extract the threshold, extract the average score matrix, produce an init country pairing adjacency matrix and then put it as a threshold passings component to the dictionary
     yr = startYr
@@ -18,11 +55,29 @@ function windowsDictThresholdsAdjList(windowConf, startYr = 1980, endYr = 1990, 
         #produce an initialized country pairing adjacency list for the threshold passings
         thresholdSignificantAdjList = initCountryPairAdjList(startYr,endYr)
         #now set the pairs of country rows for each significant pair to 1 from 0
+        #HERE we do the THRESHOLD COMPARISON
+        if(windowConf["tailSide"]=="upper" || windowConf["tailSide"]=="right")
+            println("upper")
+            for rowInd in 1:size(avgAggAdjList,1)
+                if(avgAggAdjList[rowInd,3] >= thresholdTmp)
+                    thresholdSignificantAdjList[rowInd,3] = 1
+                end            
+            end
+        else
+            println("lower")
+            for rowInd in 1:size(avgAggAdjList,1)
+                if(avgAggAdjList[rowInd,3] <= thresholdTmp)
+                    thresholdSignificantAdjList[rowInd,3] = 1
+                end            
+            end
+        end
+        #=
         for rowInd in 1:size(avgAggAdjList,1)
             if(avgAggAdjList[rowInd,3] >= thresholdTmp)
                 thresholdSignificantAdjList[rowInd,3] = 1
             end            
         end
+        =#
         winAggDict["$(yr)-$(yr+windowSize)"]["thresholdSigAdjList"] = thresholdSignificantAdjList
 	yr = yr + windowSize
     end  
