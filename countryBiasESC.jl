@@ -31,11 +31,13 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, tailSide = "upp
     
     #Now we must obtain the averages for each country from to country (we need to have the CSV data read)
     #return the dictionary of the time windows and the aggregate adjacency list of scores
-    winAggDict = windowsDictScoreAdjList(startYr, endYr, windowSize)
+    winAggDict = windowsDictThresholdsAdjList(windowConf, 1980, 1990, 5)
+    #winAggDict = windowsDictScoreAdjList(startYr, endYr, windowSize)
 
-    #produce the 
+    #alter the window aggregate dictionary to include an average country score adjacency list,
     
     
+    return winAggDict
 end
 
 

@@ -1,6 +1,38 @@
 #Doing things another way, even if not better, not over thinking this, which is not what a programming mindset is supposed to do, but jumping in.
 
 
+
+function windowsDictThresholdsAdjList(windowConf, startYr = 1980, endYr = 1990, windowSize = 5)
+    #from the csv data build the dictionary for the basic information on the country pair lists, aggregate scores and average of the aggregate scores
+    winAggDict = windowsDictScoreAdjList(startYr, endYr, windowSize)
+    println(keys(winAggDict["1980-1985"]))#["1980-1985"]["countries"])
+    println(winAggDict["1980-1985"]["avgScoreAggregateAdjList"])
+    #windowConf is a dictionary with the window keys as winDicts here, and each window has a particular threshold
+    #extract the threshold, extract the average score matrix, produce an init country pairing adjacency matrix and then put it as a threshold passings component to the dictionary
+    yr = startYr
+    while( (yr+windowSize) <= endYr )
+        #get the threshold value (float)
+        thresholdTmp = windowConf["$(yr)-$(yr+windowSize)"]
+        #extract the average of the aggregate (adjacency list of country pairs)
+        avgAggAdjList = winAggDict["1980-1985"]["avgScoreAggregateAdjList"]
+        #produce an initialized country pairing adjacency list for the threshold passings
+        thresholdSignificantAdjList = initCountryPairAdjList(startYr,endYr)
+        #now set the pairs of country rows for each significant pair to 1 from 0
+        for rowInd in 1:size(avgScoreAggregateAdjList,1)
+            if(avgAggAdjList[rowInd,3] >= thresholdTmp)
+                thresholdSignificantAdjList[rowInd,3] = 1
+            end            
+        end
+        winAggDict["$(yr)-$(yr+windowSize)"]["thresholdSigAdjList"] = thresholdSignificantAdjList
+	yr = yr + windowSize
+    end  
+    return winAggDict
+        
+end
+
+
+
+
 #Given the total time interval, and windowSize, produce a dictionary for each window
 #Returned is a dictionary for the time windows
 #"countries" key is the unique list of country names for that window
