@@ -4,20 +4,41 @@
 #Given the total time interval, and windowSize, produce a dictionary for each window
 #Returned is a dictionary for the time windows
 #"countries" key is the unique list of country names for that window
-#
+#"scoreAggregateAdjList" key is the aggregate for the country pairs in each window
 function windowsDictScoreAdjList(startYr = 1980, endYr = 1990, windowSize = 5)
 
     winDict = Dict()
     yr = startYr
     while( (yr+windowSize) <= endYr )
 	winDict["$(yr)-$(yr+windowSize)"] = Dict()
-	winDict["$(yr)-$(yr+windowSize)"]["countries"] =  subsetCountryNamesArray(startYr,endYr)
-	winDict["$(yr)-$(yr+windowSize)"]["scoreAdjList"] = aggregateAdjList(startYr,endYr)
+	winDict["$(yr)-$(yr+windowSize)"]["countries"] = subsetCountryNamesArray(startYr,endYr)
+	winDict["$(yr)-$(yr+windowSize)"]["scoreAggregateAdjList"] = aggregateAdjList(startYr,endYr)
 	yr = yr + windowSize
-    end
-
+    end  
     return winDict
 end
+
+
+#
+function emptyAggregateAdjList(startYr = 1980, endYr = 1990)
+
+    adjList = yearsScoreAdjList(startYr, endYr)
+    cntryNames = subsetCountryNamesArray(startYr,endYr)
+    countryNum = length(cntryNames)
+    aggregateAdjList = Array{Any}(countryNum^2 - countryNum, 3)
+    #INIT: fill the names and initial aggregate scores
+    tmpRow = 1
+    for ii in 1:length(cntryNames) #over each first cycle of countries
+        for jj in 1:length(cntryNames) #over second cycle of countries
+            if(ii != jj)                
+                aggregateAdjList[tmpRow,:] = [cntryNames[ii] cntryNames[jj] 0]
+                tmpRow = tmpRow + 1
+            end                    
+        end        
+    end
+    return aggregateAdjList
+end
+
 
 
 

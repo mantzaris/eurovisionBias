@@ -23,16 +23,15 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, tailSide = "upp
     #simulate scores to create a distribution
     #return the low2high score accumulation for each interval in a dictionary: windowDist[string(yr,"-",yr+windowSize)]
     windowDist = scoreSimDist(startYr, endYr, windowSize, countryYearsNum)
-    println(windowDist)
+    #println(windowDist)
 
     #get confidence intervals for the lower or upper end
     #using the scoresim, get a dictionary for the threshold of significances: dictionary -> windowConf[string(yr,"-",yr+windowSize)] = confalpha
     windowConf = windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alpha)
-
     
     #Now we must obtain the averages for each country from to country (we need to have the CSV data read)
-    #
-    totalAdjL = windowDictScoreAdjList(startYr, endYr, windowSize)
+    #return the dictionary of the time windows and the aggregate adjacency list of scores
+    winAggDict = windowsDictScoreAdjList(startYr, endYr, windowSize)
 
     #produce the 
     
