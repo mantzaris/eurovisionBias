@@ -12,15 +12,21 @@ function windowsDictScoreAdjList(startYr = 1980, endYr = 1990, windowSize = 5)
     while( (yr+windowSize) <= endYr )
 	winDict["$(yr)-$(yr+windowSize)"] = Dict()
 	winDict["$(yr)-$(yr+windowSize)"]["countries"] = subsetCountryNamesArray(startYr,endYr)
-	winDict["$(yr)-$(yr+windowSize)"]["scoreAggregateAdjList"] = aggregateAdjList(startYr,endYr)
+        aggAdjList = aggregateAdjList(startYr,endYr)
+	winDict["$(yr)-$(yr+windowSize)"]["scoreAggregateAdjList"] = aggAdjList
+        #compute the average over the window for the scores
+        avgAggAdjList = initCountryPairAdjList(startYr,endYr)
+        avgAggAdjList[:,3] = aggAdjList[:,3].*(1/(windowSize+1))
+        winDict["$(yr)-$(yr+windowSize)"]["avgScoreAggregateAdjList"] = avgAggAdjList
+        
 	yr = yr + windowSize
     end  
     return winDict
 end
 
 
-#
-function emptyAggregateAdjList(startYr = 1980, endYr = 1990)
+#create and return an adjacency country pair list with initially zero for the scores
+function initCountryPairAdjList(startYr = 1980, endYr = 1990)
 
     adjList = yearsScoreAdjList(startYr, endYr)
     cntryNames = subsetCountryNamesArray(startYr,endYr)
