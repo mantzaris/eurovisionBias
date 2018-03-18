@@ -14,11 +14,11 @@ function windowsDictThresholdsAdjList(windowConf, startYr = 1980, endYr = 1990, 
         #get the threshold value (float)
         thresholdTmp = windowConf["$(yr)-$(yr+windowSize)"]
         #extract the average of the aggregate (adjacency list of country pairs)
-        avgAggAdjList = winAggDict["1980-1985"]["avgScoreAggregateAdjList"]
+        avgAggAdjList = winAggDict["$(yr)-$(yr+windowSize)"]["avgScoreAggregateAdjList"]
         #produce an initialized country pairing adjacency list for the threshold passings
         thresholdSignificantAdjList = initCountryPairAdjList(startYr,endYr)
         #now set the pairs of country rows for each significant pair to 1 from 0
-        for rowInd in 1:size(avgScoreAggregateAdjList,1)
+        for rowInd in 1:size(avgAggAdjList,1)
             if(avgAggAdjList[rowInd,3] >= thresholdTmp)
                 thresholdSignificantAdjList[rowInd,3] = 1
             end            
