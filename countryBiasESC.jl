@@ -7,6 +7,10 @@
 5 
 =#
 
+#need GraphViz to visualize the results
+using GraphViz
+
+
 #csvDir2AdjList.jl is the file with functions to call upon the real data to get the aggregates
 include("csvDir2AdjList.jl")
 
@@ -33,10 +37,10 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
     
     #Now we must obtain the averages for each country from to country (we need to have the CSV data read)
     #return the dictionary of the time windows and the aggregate adjacency list of scores, country names, average scores aggregates for each window, and the thresholds of when the average surpasses the alpha value for significance. keys: "countries" "thresholdSigAdjList" "avgScoreAggregateAdjList" "scoreAggregateAdjList"
-    winAggDict = windowsDictThresholdsAdjList(windowConf, 1980, 1990, 5)
+    winAggDictUpper = windowsDictThresholdsAdjList(windowConf, 1980, 1990, 5)
 
     #To reduce computations later on, we now add to the dictionary a key to the total threshold surpassings as a count for the set of windows (1 per window significance) and get the total country name list for the full time period each window covers
-    winAggDict = dictTotalThresholdsAdjListWindowCount(winAggDict,startYr,endYr,windowSize)
+    winAggDictUpper = dictTotalThresholdsAdjListWindowCount(winAggDictUpper,startYr,endYr,windowSize)
 
     #same as above but now for the lower end of the distribution
     tailSide = "lower"
@@ -44,10 +48,8 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
     winAggDictLower = windowsDictThresholdsAdjList(windowConfLower, 1980, 1990, 5)
     winAggDictLower = dictTotalThresholdsAdjListWindowCount(winAggDictLower,startYr,endYr,windowSize)
 
-    
-    
-    
-    return winAggDictLower
+            
+    return [winAggDictUpper,winAggDictLower]
 end
 
 

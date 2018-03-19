@@ -57,14 +57,14 @@ function windowsDictThresholdsAdjList(windowConf, startYr = 1980, endYr = 1990, 
         #now set the pairs of country rows for each significant pair to 1 from 0
         #HERE we do the THRESHOLD COMPARISON
         if(windowConf["tailSide"]=="upper" || windowConf["tailSide"]=="right")
-            println("upper")
+            #println("upper")
             for rowInd in 1:size(avgAggAdjList,1)
                 if(avgAggAdjList[rowInd,3] >= thresholdTmp)
                     thresholdSignificantAdjList[rowInd,3] = 1
                 end            
             end
         else
-            println("lower")
+            #println("lower")
             for rowInd in 1:size(avgAggAdjList,1)
                 if(avgAggAdjList[rowInd,3] <= thresholdTmp)
                     thresholdSignificantAdjList[rowInd,3] = 1
