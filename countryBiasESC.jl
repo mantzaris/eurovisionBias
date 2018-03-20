@@ -48,6 +48,8 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
     winAggDictLower = windowsDictThresholdsAdjList(windowConfLower, 1980, 1990, 5)
     winAggDictLower = dictTotalThresholdsAdjListWindowCount(winAggDictLower,startYr,endYr,windowSize)
 
+
+    
             
     return [winAggDictUpper,winAggDictLower]
 end
