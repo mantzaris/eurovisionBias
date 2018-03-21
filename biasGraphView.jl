@@ -18,8 +18,9 @@ function graphAvoid(wAGLOW)
 
     wTmp = wAGLOW["1980-1985"]
 #    println(wTmp)
-    for kk in keys(wTmp)
-        if(kk == "1980-1985"])
+    for kk in keys(wAGLOW)
+        if(kk[1] == '1'])
+            
             #make it a digraph for bi directional edges
             #No label as it is hard to predict the relative size of the font for the final output imae
             networkInit = "digraph avoid {  "    
@@ -34,11 +35,12 @@ function graphAvoid(wAGLOW)
 
             #finalize the network dscription by the final identifier
             networkInit = string(networkInit, "}")
-            println(networkInit)
+            #println(networkInit)
 
             #name for the dot file name and the network file name and output image
             writeGraphViz("networkTmp", networkInit)
-        end        
+        end
+        println("kk")
     end
     
 end
