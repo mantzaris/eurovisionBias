@@ -12,23 +12,59 @@ east = ["Russia","Ukraine","Moldova","Belarus","Poland","Georgia","Armenia","Aze
 #each dictionary has the keys
 #countriesNamesTotal
 #thresholdSignificantAdjListTOTAL
-#Window spans
+#Window spans-> countries | thresholdSigAdjList | avgScoreAggregateAdjList | scoreAggregateAdjList
 #make a function to start the graph
 function graphAvoid(wAGLOW)
 
-    #make it a digraph for bi directional edges
-    #No label as it is hard to predict the relative size of the font for the final output imae
-    networkInit = "digraph avoid {  "    
-    
-    println("ok..")
-    nodeDescriptions = countryNodeDescriptors(wAGLOW)
-    networkInit = string(networkInit, nodeDescriptions)
-    networkInit = string(networkInit,"France","->","Greece"," [ color=red penwidth=3];")
-    networkInit = string(networkInit, "}")
-    println(networkInit)
+    wTmp = wAGLOW["1980-1985"]
+#    println(wTmp)
+    for kk in keys(wTmp)
+        if(kk == "1980-1985"])
+            #make it a digraph for bi directional edges
+            #No label as it is hard to predict the relative size of the font for the final output imae
+            networkInit = "digraph avoid {  "    
 
-    writeGraphViz("networkTmp", networkInit)
+            #pass the dictionary to obtain the graphviz string for the node descriptions (attributes color etc)
+            nodeDescriptions = countryNodeDescriptors(wTmp)
+            networkInit = string(networkInit, nodeDescriptions)
+
+            #buildup the edges and edge attributes
+            sigStr = countryEdges(wTmp["thresholdSigAdjList"])
+            networkInit = string(networkInit,sigStr)
+
+            #finalize the network dscription by the final identifier
+            networkInit = string(networkInit, "}")
+            println(networkInit)
+
+            #name for the dot file name and the network file name and output image
+            writeGraphViz("networkTmp", networkInit)
+        end        
+    end
+    
 end
+
+
+#construct the string of the country pairs and the edge attributes
+#takes an AdjList
+function countryEdges(sigAdjList)
+    edges = ""
+    for ii in 1:size(sigAdjList,1)
+        if(sigAdjList[ii,3] > 0)
+            cntry1 = sigAdjList[ii,1]
+            cntry1 = fixBadChars(cntry1)
+            cntry2 = sigAdjList[ii,2]
+            cntry2 = fixBadChars(cntry2)
+            edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=2];")
+        end
+        
+    end
+    
+    println(sigAdjList)
+    return edges#string("France","->","Greece"," [ color=red penwidth=3];")
+        
+end
+
+
 
 #give the .dot file to graphviz and make the png file
 function writeGraphViz(filename, networkInit)
@@ -45,8 +81,9 @@ end
 #add the components of the country names and the descriptors
 function countryNodeDescriptors(dict_wAG)
     nodeDescriptor = ""
-    countriesNamesTotal = dict_wAG["countriesNamesTotal"]
+    countriesNamesTotal = dict_wAG["countries"]#dict_wAG["countriesNamesTotal"]
     println(countriesNamesTotal)
+    
     countriesNamesTotal = removeBadChars(countriesNamesTotal)
     for ii in 1:length(countriesNamesTotal)
         tmpCountry = countriesNamesTotal[ii]
@@ -58,6 +95,17 @@ function countryNodeDescriptors(dict_wAG)
     
     return nodeDescriptor
 end
+
+
+function fixBadChars(str_Pre)
+       
+    strPre = replace(str_Pre,"&","")
+    strPre = replace(strPre,".","")
+    strPre =  replace(strPre," ","")
+        
+    return strPre
+end
+
 
 #take an array and return the fixed name
 function removeBadChars(strs_Pre)
