@@ -18,14 +18,14 @@ function graphAvoid(wAGLOW)
 
     #make it a digraph for bi directional edges
     #No label as it is hard to predict the relative size of the font for the final output imae
-    networkInit = "digraph{ graph "    
+    networkInit = "digraph avoid {  "    
     
     println("ok..")
     nodeDescriptions = countryNodeDescriptors(wAGLOW)
     networkInit = string(networkInit, nodeDescriptions)
     
     
-    
+    networkInit = string(networkInit, "}")
     println(networkInit)
 end
 
