@@ -23,11 +23,24 @@ function graphAvoid(wAGLOW)
     println("ok..")
     nodeDescriptions = countryNodeDescriptors(wAGLOW)
     networkInit = string(networkInit, nodeDescriptions)
-    
-    
+    networkInit = string(networkInit,"France","->","Greece"," [ color=red penwidth=3];")
     networkInit = string(networkInit, "}")
     println(networkInit)
+
+    writeGraphViz("networkTmp", networkInit)
 end
+
+#give the .dot file to graphviz and make the png file
+function writeGraphViz(filename, networkInit)
+    fileName = string("network1",".dot")
+    print(fileName)
+    filePNG = string("network1",".png")
+    print(filePNG)
+    writedlm(string("./",fileName), [networkInit])
+    
+    run(`dot $fileName -Tpng -o $filePNG`)
+end
+
 
 #add the components of the country names and the descriptors
 function countryNodeDescriptors(dict_wAG)
