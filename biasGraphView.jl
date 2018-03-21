@@ -14,19 +14,19 @@ east = ["Russia","Ukraine","Moldova","Belarus","Poland","Georgia","Armenia","Aze
 #thresholdSignificantAdjListTOTAL
 #Window spans
 #make a function to start the graph
-function graphAvoid(wAgUP,wAGLOW)
+function graphAvoid(wAGLOW)
 
     #make it a digraph for bi directional edges
     #No label as it is hard to predict the relative size of the font for the final output imae
     networkInit = "digraph{ graph "    
     
     println("ok..")
-    tmp = regionNodeString("Russia")
+    nodeDescriptions = countryNodeDescriptors(wAGLOW)
+    networkInit = string(networkInit, nodeDescriptions)
     
-    countryNamesTotal = wAGLOW["countriesNamesTotal"]
     
     
-    println(tmp)
+    println(networkInit)
 end
 
 #add the components of the country names and the descriptors
