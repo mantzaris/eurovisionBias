@@ -5,8 +5,8 @@
 southWest = ["Portugal","Spain","Malta","SanMarino","Andorra","Monaco","Morocco","Italy"]
     north = ["Iceland","Denmark","Norway","Sweden","Finland"]
     northWest = ["UnitedKingdom","Ireland","Belgium","France","Luxembourg"]
-    central = ["Germany","Austria","TheNetherlands","Switzerland","Slovenia","CzechRepublic","Hungary"]
-    southEast = ["Greece","Montenegro","Cyprus","Albania","Bulgaria","Croatia","BosniaHerzegovina","Turkey","FYRMacedonia","Romania","Serbia","Israel","Yugoslavia"]
+    central = ["Germany","Austria","TheNetherlands","Switzerland","Slovenia","CzechRepublic","Hungary","Slovakia"]
+    southEast = ["Greece","Montenegro","Cyprus","Albania","Bulgaria","Croatia","BosniaHerzegovina","Turkey","FYRMacedonia","Romania","Serbia","Israel","Yugoslavia","SerbiaMontenegro"]
 east = ["Russia","Ukraine","Moldova","Belarus","Poland","Georgia","Armenia","Azerbaijan","Estonia","Lithuania","Latvia"]
 
 #each dictionary has the keys
@@ -16,7 +16,7 @@ east = ["Russia","Ukraine","Moldova","Belarus","Poland","Georgia","Armenia","Aze
 #make a function to start the graph
 function graphAvoid(wAGLOW)
 
-    wTmp = wAGLOW["1980-1985"]
+#    wTmp = wAGLOW["1980-1985"]
 #    println(wTmp)
     for kk in keys(wAGLOW)
         if(kk[1] == '1')
@@ -26,11 +26,11 @@ function graphAvoid(wAGLOW)
             networkInit = "digraph avoid {  "    
 
             #pass the dictionary to obtain the graphviz string for the node descriptions (attributes color etc)
-            nodeDescriptions = countryNodeDescriptors(wTmp)
+            nodeDescriptions = countryNodeDescriptors(wAGLOW[kk])
             networkInit = string(networkInit, nodeDescriptions)
 
             #buildup the edges and edge attributes
-            sigStr = countryEdges(wTmp["thresholdSigAdjList"])
+            sigStr = countryEdges(wAGLOW[kk]["thresholdSigAdjList"])
             networkInit = string(networkInit,sigStr)
 
             #finalize the network dscription by the final identifier
@@ -144,7 +144,9 @@ function regionNodeString(countryInput)
     elseif(countryInput in southEast)
         nodeStr = " [style=filled,fillcolor=darkgoldenrod1]; "
     else
-        println("country to region not found")
+        
+        print("country to region not found: ")
+        println(countryInput)
     end
     
     return nodeStr
