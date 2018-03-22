@@ -19,7 +19,7 @@ function graphAvoid(wAGLOW)
     wTmp = wAGLOW["1980-1985"]
 #    println(wTmp)
     for kk in keys(wAGLOW)
-        if(kk[1] == '1'])
+        if(kk[1] == '1')
             
             #make it a digraph for bi directional edges
             #No label as it is hard to predict the relative size of the font for the final output imae
@@ -38,9 +38,10 @@ function graphAvoid(wAGLOW)
             #println(networkInit)
 
             #name for the dot file name and the network file name and output image
-            writeGraphViz("networkTmp", networkInit)
+            fileName = string("networkAvoid",kk)
+            writeGraphViz(fileName, networkInit)
         end
-        println("kk")
+        println(kk)
     end
     
 end
@@ -61,7 +62,7 @@ function countryEdges(sigAdjList)
         
     end
     
-    println(sigAdjList)
+    #println(sigAdjList)
     return edges#string("France","->","Greece"," [ color=red penwidth=3];")
         
 end
@@ -70,13 +71,17 @@ end
 
 #give the .dot file to graphviz and make the png file
 function writeGraphViz(filename, networkInit)
-    fileName = string("network1",".dot")
-    print(fileName)
-    filePNG = string("network1",".png")
-    print(filePNG)
-    writedlm(string("./",fileName), [networkInit])
+    fileNameDot = string(filename,".dot")
     
-    run(`dot $fileName -Tpng -o $filePNG`)
+    filePNG = string(filename,".png")
+    
+    writedlm(string(fileNameDot), [networkInit])
+    
+    #filePNGrel = string("./graphs/",filePNG)
+    #println(filePNGrel)
+    run(`dot $fileNameDot -Tpng -o $filePNG`)
+    run(`mv $filePNG ./graphs/`)
+    run(`mv $fileNameDot ./graphs/`)
 end
 
 
@@ -89,9 +94,9 @@ function countryNodeDescriptors(dict_wAG)
     countriesNamesTotal = removeBadChars(countriesNamesTotal)
     for ii in 1:length(countriesNamesTotal)
         tmpCountry = countriesNamesTotal[ii]
-        println(tmpCountry)
+        #println(tmpCountry)
         nodeDescTmp = regionNodeString(tmpCountry)
-        println(nodeDescTmp)
+        #println(nodeDescTmp)
         nodeDescriptor = string(nodeDescriptor,tmpCountry,nodeDescTmp)
     end
     
