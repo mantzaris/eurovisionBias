@@ -17,7 +17,13 @@ east = ["Russia","Ukraine","Moldova","Belarus","Poland","Georgia","Armenia","Aze
 function graphAvoid(wAGLOW)
 
 #    wTmp = wAGLOW["1980-1985"]
-#    println(wTmp)
+    #    println(wTmp)
+    produceOneWayGraphs(wAGLOW)
+    
+end
+
+#from the dictionary produce the one way Avoids for the time windows in the dictionary keys
+function produceOneWayGraphs(wAGLOW)
     for kk in keys(wAGLOW)
         if(kk[1] == '1')
             
@@ -38,13 +44,14 @@ function graphAvoid(wAGLOW)
             #println(networkInit)
 
             #name for the dot file name and the network file name and output image
-            fileName = string("networkAvoid",kk)
+            fileName = string("networkAvoidOneWay",kk)
             writeGraphViz(fileName, networkInit)
         end
         println(kk)
     end
     
 end
+
 
 
 #construct the string of the country pairs and the edge attributes
@@ -57,7 +64,7 @@ function countryEdges(sigAdjList)
             cntry1 = fixBadChars(cntry1)
             cntry2 = sigAdjList[ii,2]
             cntry2 = fixBadChars(cntry2)
-            edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=2];")
+            edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=1];")
         end
         
     end
