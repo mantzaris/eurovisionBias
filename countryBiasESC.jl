@@ -2,7 +2,7 @@
 #=
 1 Get the range of the dataset: dataCountryYearsNum() -> #looks at the whole dataset of score files and reads the header to return a dictionary for the year->countrynumber, min year, max year
 2 Check the parameters: paramCheck() -> all the variable values supplied are valid
-3 Simulate the null unbiases score distribution in a simulation: scoreSimDist -> Given the full range of years and interval/windowSize return the low2high score accumulation for each interval in a dictionary: windowDist[string(yr,"-",yr+windowSize)]
+3 Simulate the null unbiases score distribution in a simulation: scoreSimDist -> Given the full range of years and interval/windowSize return the low2high score accumulation for each interval in a di=ctionary: windowDist[string(yr,"-",yr+windowSize)]
 4 using the scoreSim dictionary of ranked list of sampled scores, return the threshold for each window as a dictionary -> windowConf[string(yr,"-",yr+windowSize)] = confalpha
 5 
 =#

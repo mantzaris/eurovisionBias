@@ -17,7 +17,7 @@ east = ["Russia","Ukraine","Moldova","Belarus","Poland","Georgia","Armenia","Aze
 function graphAvoid(wAGLOW)
 
     #produce the graph images from the one way avoid biases
-#    produceOneWayGraphs(wAGLOW)
+    produceOneWayGraphs(wAGLOW)
     #produce the graph images from the total one way avoids
     produceTotalOneWayGraphs(wAGLOW)
 end
@@ -39,14 +39,24 @@ function produceTotalOneWayGraphs(wAGLOW)
     sigStr = countryEdgesTotal(wAGLOW["thresholdSignificantAdjListTOTAL"])
     networkInit = string(networkInit,sigStr)
     println(networkInit)
-#=
-        #finalize the network dscription by the final identifier
-        networkInit = string(networkInit, "}")
+    
+    #finalize the network dscription by the final identifier
+    networkInit = string(networkInit, "}")
 
-        #name for the dot file name and the network file name and output image
-        fileName = string("networkAvoidOneWay",kk)
-        writeGraphViz(fileName, networkInit)
-=#
+    #name for the dot file name and the network file name and output image
+    keys1 = [(if(kk[1]=='1'); kk;end)  for kk in keys(wAGLOW)]
+    keys1 = keys1[keys1 .!= nothing]
+    yearsWin = [split(k1,"-") for k1 in keys1]
+    years = vcat(yearsWin)
+    years = [j for i in years for j in i]    
+    years = sort(years)
+    yearMin = parse(Int,years[1])    
+    yearMax = parse(Int,years[end])    
+    winYears = convert(Int, (yearMax - yearMin) / (length(years)-2))
+    
+    fileName = string("networkAvoidTotal",yearMin,"to",yearMax,"win",winYears)
+    writeGraphViz(fileName, networkInit)
+
 end
 
 
