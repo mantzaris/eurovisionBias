@@ -16,17 +16,67 @@ east = ["Russia","Ukraine","Moldova","Belarus","Poland","Georgia","Armenia","Aze
 #make a function to start the graph
 function graphAvoid(wAGLOW)
 
-#    wTmp = wAGLOW["1980-1985"]
-    #    println(wTmp)
-    produceOneWayGraphs(wAGLOW)
-    
+    #produce the graph images from the one way avoid biases
+#    produceOneWayGraphs(wAGLOW)
+    #produce the graph images from the total one way avoids
+    produceTotalOneWayGraphs(wAGLOW)
 end
+
+
+#from the dictionary produce the one way Avoids for the TOTAL time windows in the dictionary keys
+function produceTotalOneWayGraphs(wAGLOW)
+  
+    #make it a digraph for bi directional edges
+    #No label as it is hard to predict the relative size of the font for the final output imae
+    networkInit = "digraph avoid {  "    
+    
+    #pass the dictionary to obtain the graphviz string for the node descriptions (attributes color etc)
+    nodeDescriptions = countryNodeDescriptorsTotal(wAGLOW)
+    networkInit = string(networkInit, nodeDescriptions)
+    println(networkInit)
+
+    #buildup the edges and edge attributes
+    sigStr = countryEdgesTotal(wAGLOW["thresholdSignificantAdjListTOTAL"])
+    networkInit = string(networkInit,sigStr)
+    println(networkInit)
+#=
+        #finalize the network dscription by the final identifier
+        networkInit = string(networkInit, "}")
+
+        #name for the dot file name and the network file name and output image
+        fileName = string("networkAvoidOneWay",kk)
+        writeGraphViz(fileName, networkInit)
+=#
+end
+
+
+#construct the string of the country pairs and the edge attributes
+#takes an AdjList from the total window set
+function countryEdgesTotal(sigAdjList)
+    edges = ""
+    for ii in 1:size(sigAdjList,1)
+        if(sigAdjList[ii,3] > 0)
+            cntry1 = sigAdjList[ii,1]
+            cntry1 = fixBadChars(cntry1)
+            cntry2 = sigAdjList[ii,2]
+            cntry2 = fixBadChars(cntry2)
+            weight = sigAdjList[ii,3]
+            edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=$(weight)];")
+        end
+        
+    end
+    
+    #println(sigAdjList)
+    return edges#string("France","->","Greece"," [ color=red penwidth=3];")
+        
+end
+
+
 
 #from the dictionary produce the one way Avoids for the time windows in the dictionary keys
 function produceOneWayGraphs(wAGLOW)
     for kk in keys(wAGLOW)
         if(kk[1] == '1')
-            
             #make it a digraph for bi directional edges
             #No label as it is hard to predict the relative size of the font for the final output imae
             networkInit = "digraph avoid {  "    
@@ -41,15 +91,13 @@ function produceOneWayGraphs(wAGLOW)
 
             #finalize the network dscription by the final identifier
             networkInit = string(networkInit, "}")
-            #println(networkInit)
 
             #name for the dot file name and the network file name and output image
             fileName = string("networkAvoidOneWay",kk)
             writeGraphViz(fileName, networkInit)
         end
         println(kk)
-    end
-    
+    end    
 end
 
 
@@ -104,6 +152,23 @@ function countryNodeDescriptors(dict_wAG)
         #println(tmpCountry)
         nodeDescTmp = regionNodeString(tmpCountry)
         #println(nodeDescTmp)
+        nodeDescriptor = string(nodeDescriptor,tmpCountry,nodeDescTmp)
+    end
+    
+    return nodeDescriptor
+end
+
+
+#add the components of the country names and the descriptors
+function countryNodeDescriptorsTotal(wAGLOW)
+    nodeDescriptor = ""
+    countriesNamesTotal = wAGLOW["countriesNamesTotal"]#dict_wAG["countriesNamesTotal"]
+    println(countriesNamesTotal)
+    
+    countriesNamesTotal = removeBadChars(countriesNamesTotal)
+    for ii in 1:length(countriesNamesTotal)
+        tmpCountry = countriesNamesTotal[ii]
+        nodeDescTmp = regionNodeString(tmpCountry)
         nodeDescriptor = string(nodeDescriptor,tmpCountry,nodeDescTmp)
     end
     
