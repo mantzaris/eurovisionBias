@@ -52,9 +52,18 @@ function produceTotalOneWayGraphs(wAGLOW)
     years = sort(years)
     yearMin = parse(Int,years[1])    
     yearMax = parse(Int,years[end])    
-    winYears = convert(Int, (yearMax - yearMin) / (length(years)-2))
+    println(yearMin)
+    println(yearMax)
+    println(length(years))
+    println(years)
+    if(length(years)>2)
+        winYears = convert(Int, (yearMax - yearMin) / (length(years)-2))
+    else
+        winYears = (yearMax - yearMin)
+    end
     
-    fileName = string("networkAvoidTotal",yearMin,"to",yearMax,"win",winYears)
+    alpha = wAGLOW["alpha"]
+    fileName = string("networkAvoidTotal",yearMin,"to",yearMax,"win",winYears,"alpha",alpha)
     writeGraphViz(fileName, networkInit)
 
 end
@@ -102,8 +111,9 @@ function produceOneWayGraphs(wAGLOW)
             #finalize the network dscription by the final identifier
             networkInit = string(networkInit, "}")
 
+            alpha = wAGLOW["alpha"]
             #name for the dot file name and the network file name and output image
-            fileName = string("networkAvoidOneWay",kk)
+            fileName = string("networkAvoidOneWay",kk,"alpha",alpha)
             writeGraphViz(fileName, networkInit)
         end
         println(kk)
