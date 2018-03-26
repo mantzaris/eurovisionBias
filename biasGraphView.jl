@@ -17,9 +17,11 @@ east = ["Russia","Ukraine","Moldova","Belarus","Poland","Georgia","Armenia","Aze
 function graphAvoid(wAGLOW)
 
     #produce the graph images from the one way avoid biases
-    produceOneWayGraphs(wAGLOW)
+    #produceOneWayGraphs(wAGLOW)
     #produce the graph images from the total one way avoids
-    produceTotalOneWayGraphs(wAGLOW)
+    #produceTotalOneWayGraphs(wAGLOW)
+    #produce the mutual Avoid/Neglect
+    produceMutualTwoWayGraphs(wAGLOW)
 end
 
 
@@ -244,3 +246,62 @@ function regionNodeString(countryInput)
     return nodeStr
 end
 
+
+
+
+#NOW FOR THE MUTUAL ONE WAY
+
+#from the dictionary produce the Mutual Avoids for the time windows in the dictionary keys
+function produceMutualTwoWayGraphs(wAGLOW)
+    for kk in keys(wAGLOW)
+        if(kk[1] == '1')
+            #make it a digraph for bi directional edges
+            networkInit = "digraph avoid {  "    
+
+            #pass the dictionary to obtain the graphviz string for the node descriptions (attributes color etc)
+            nodeDescriptions = countryNodeDescriptors(wAGLOW[kk])
+            networkInit = string(networkInit, nodeDescriptions)
+
+            #buildup the edges and edge attributes
+            sigStr = countryEdgesMutual(wAGLOW[kk]["thresholdSigAdjList"])
+            networkInit = string(networkInit,sigStr)
+
+            #finalize the network dscription by the final identifier
+            networkInit = string(networkInit, "}")
+
+            alpha = wAGLOW["alpha"]
+            #name for the dot file name and the network file name and output image
+            fileName = string("networkAvoidTwoWay",kk,"alpha",alpha)
+            writeGraphViz(fileName, networkInit)
+        end
+        println(kk)
+    end    
+end
+
+
+
+#construct the string of the country pairs and the edge attributes
+#takes an AdjList
+function countryEdgesMutual(sigAdjList)
+    edges = ""
+    for ii in 1:size(sigAdjList,1)
+        if(sigAdjList[ii,3] > 0)
+            
+            for jj in ii+1:size(sigAdjList,1)
+                if( (sigAdjList[ii,1]==sigAdjList[jj,2]) && (sigAdjList[ii,2]==sigAdjList[jj,1]) && (sigAdjList[jj,3] > 0))
+                cntry1 = sigAdjList[ii,1]
+                cntry1 = fixBadChars(cntry1)
+                cntry2 = sigAdjList[ii,2]
+                cntry2 = fixBadChars(cntry2)           
+                edges = string(edges,cntry1,"->",cntry2," [dir=both color=red penwidth=1];")
+                end
+            end
+            
+        end
+        
+    end
+    
+    #println(sigAdjList)
+    return edges#string("France","->","Greece"," [ color=red penwidth=3];")
+        
+end
