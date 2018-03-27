@@ -259,7 +259,7 @@ function produceMutualTwoWayGraphs(wAGLOW)
             networkInit = "digraph avoid {  "    
 
             #pass the dictionary to obtain the graphviz string for the node descriptions (attributes color etc)
-            nodeDescriptions = countryNodeDescriptorsMutualAvoid(wAGLOW[kk],wAGLOW[kk]["thresholdSigAdjList"])
+            nodeDescriptions = countryNodeDescriptorsMutualAvoid(wAGLOW[kk]["thresholdSigAdjList"])
             networkInit = string(networkInit, nodeDescriptions)
 
             #buildup the edges and edge attributes
@@ -277,37 +277,25 @@ function produceMutualTwoWayGraphs(wAGLOW)
     end    
 end
 
-function countryNodeDescriptorsMutualAvoid(dict_wAG,sigAdjList)
-    nodeDescriptor = ""
-    countriesNamesTotal = dict_wAG["countries"]#dict_wAG["countriesNamesTotal"]
-        
-    countriesNamesTotal = removeBadChars(countriesNamesTotal)
-    for ii in 1:length(countriesNamesTotal)
-        tmpCountry = countriesNamesTotal[ii]
-
-        
-        nodeDescTmp = regionNodeString(tmpCountry)
-
-        nodeDescriptor = string(nodeDescriptor,tmpCountry,nodeDescTmp)
-    end    
-    return nodeDescriptor
+function countryNodeDescriptorsMutualAvoid(sigAdjList)
     nodes = ""
     for ii in 1:size(sigAdjList,1)
-        if(sigAdjList[ii,3] > 0)
-            
+        if(sigAdjList[ii,3] > 0)         
             for jj in ii+1:size(sigAdjList,1)
                 if( (sigAdjList[ii,1]==sigAdjList[jj,2]) && (sigAdjList[ii,2]==sigAdjList[jj,1]) && (sigAdjList[jj,3] > 0))
-                cntry1 = sigAdjList[ii,1]
-                cntry1 = fixBadChars(cntry1)
-                cntry2 = sigAdjList[ii,2]
-                cntry2 = fixBadChars(cntry2)           
-                edges = string(edges,cntry1,"->",cntry2," [dir=both color=red penwidth=1];")
+                    cntry1 = sigAdjList[ii,1]
+                    cntry1 = fixBadChars(cntry1)
+                    cntry2 = sigAdjList[ii,2]
+                    cntry2 = fixBadChars(cntry2)
+                    nodeTmp1 = regionNodeString(cntry1)
+                    nodeTmp2 = regionNodeString(cntry2)
+                    nodes = string(nodes,cntry1,nodeTmp1,cntry2,nodeTmp2)
                 end
             end
             
-        end
-        
+        end        
     end
+    return nodes
 end
 
 
