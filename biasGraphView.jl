@@ -21,7 +21,9 @@ function graphAvoid(wAGLOW)
     #produce the graph images from the total one way avoids
     #produceTotalOneWayGraphs(wAGLOW)
     #produce the mutual Avoid/Neglect
-    produceMutualTwoWayGraphs(wAGLOW)
+    #produceMutualTwoWayGraphs(wAGLOW)
+    #produce the total mutual avoid count graph
+    produceTotalMutualTwoWayGraphs(wAGLOW)
 end
 
 
@@ -324,4 +326,69 @@ function countryEdgesMutual(sigAdjList)
     #println(sigAdjList)
     return edges#string("France","->","Greece"," [ color=red penwidth=3];")
         
+end
+
+
+#total mutual avoid graphs for the two ways to produce the weighted edge graph
+#this only counts the years where the significance was aligned as a threshold
+function produceTotalMutualTwoWayGraphs(wAGLOW)
+    #start the network .dot file
+    networkInit = "digraph avoid {  "    
+    
+    nodeDescriptions = countryNodeDescriptorsTotalMutualAvoid(wAGLOW)
+    networkInit = string(networkInit, nodeDescriptions)
+
+    
+    #finalize the network dscription by the final identifier
+    networkInit = string(networkInit, "}")
+    
+    
+    
+    
+    
+    
+end
+
+#the total mutual avoid country name set 
+function countryNodeDescriptorsTotalMutualAvoid(wAGLOW)
+    nodes = ""
+    seen = []
+    for kk in keys(wAGLOW)
+        if(kk[1] == '1')
+
+            #get the window
+            sigAdjList = wAGLOW[kk]["thresholdSigAdjList"]
+
+            for ii in 1:size(sigAdjList,1)
+                if(sigAdjList[ii,3] > 0)         
+                    for jj in ii+1:size(sigAdjList,1)
+                        if( (sigAdjList[ii,1]==sigAdjList[jj,2]) && (sigAdjList[ii,2]==sigAdjList[jj,1]) && (sigAdjList[jj,3] > 0))
+                            cntry1 = sigAdjList[ii,1]
+                            cntry1 = fixBadChars(cntry1)
+                            cntry2 = sigAdjList[ii,2]
+                            cntry2 = fixBadChars(cntry2)
+                            if( (count(seen[:] .== cntry1) == 0) && (count(seen[:] .== cntry2) == 0) )
+                                nodeTmp1 = regionNodeString(cntry1)
+                                nodeTmp2 = regionNodeString(cntry2)
+                                nodes = string(nodes,cntry1,nodeTmp1,cntry2,nodeTmp2)
+                                seen = vcat(seen,cntry1)
+                                seen = vcat(seen,cntry2)
+                            elseif( (count(seen[:] .== cntry1) == 0) )
+                                nodeTmp1 = regionNodeString(cntry1)                                
+                                nodes = string(nodes,cntry1,nodeTmp1)
+                                seen = vcat(seen,cntry1)
+                            elseif( (count(seen[:] .== cntry2) == 0) )
+                                nodeTmp2 = regionNodeString(cntry2)                                
+                                nodes = string(nodes,cntry2,nodeTmp2)
+                                seen = vcat(seen,cntry2)
+                            end
+                        end
+                    end
+                    
+                end        
+            end
+        end
+    end
+    
+    return nodes
 end
