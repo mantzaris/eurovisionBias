@@ -334,14 +334,34 @@ function produceTotalMutualTwoWayGraphs(wAGLOW)
     nodeDescriptions = countryNodeDescriptorsTotalMutualAvoid(wAGLOW)
     networkInit = string(networkInit, nodeDescriptions)
 
+    #buildup the edges and edge attributes
+    sigStr = countryMutualEdgesTotal(wAGLOW)
+    networkInit = string(networkInit,sigStr)
     
     #finalize the network dscription by the final identifier
     networkInit = string(networkInit, "}")
     
+    #name for the dot file name and the network file name and output image
+    keys1 = [(if(kk[1]=='1' || kk[1] == '2'); kk;end)  for kk in keys(wAGLOW)]
+    keys1 = keys1[keys1 .!= nothing]
+    yearsWin = [split(k1,"-") for k1 in keys1]
+    years = vcat(yearsWin)
+    years = [j for i in years for j in i]    
+    years = sort(years)
+    yearMin = parse(Int,years[1])    
+    yearMax = parse(Int,years[end])    
+    if(length(years)>2)
+        winYears = convert(Int, (yearMax - yearMin) / (length(years)-2))
+    else
+        winYears = (yearMax - yearMin)
+    end
+    
+    alpha = wAGLOW["alpha"]
+    fileName = string("networkMutualAvoidTotal",yearMin,"to",yearMax,"win",winYears,"alpha",alpha)
+    writeGraphViz(fileName, networkInit)
     
     
-    
-    
+    println(networkInit)
     
 end
 
@@ -350,7 +370,7 @@ function countryNodeDescriptorsTotalMutualAvoid(wAGLOW)
     nodes = ""
     seen = []
     for kk in keys(wAGLOW)
-        if(kk[1] == '1')
+        if(kk[1] == '1' || kk[1] == '2')
 
             #get the window
             sigAdjList = wAGLOW[kk]["thresholdSigAdjList"]
@@ -396,7 +416,7 @@ function countryMutualEdgesTotal(wAGLOW)
     #their order
     mutualAdjList = []
     for kk in keys(wAGLOW)
-        if(kk[1] == '1')
+        if(kk[1] == '1' || kk[1] == '2')
             sigAdjList = wAGLOW[kk]["thresholdSigAdjList"]#every time window there will be at most 1 mutual edge
             
             for ii in 1:size(sigAdjList,1)
@@ -412,22 +432,22 @@ function countryMutualEdgesTotal(wAGLOW)
                             #println(mutualAdjList)
                             if( isempty(mutualAdjList) )
                                 mutualAdjList = vcat(mutualAdjList,[cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
-                                println("in if for isempty")
-                                println([cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
+                                #println("in if for isempty")
+                                #println([cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
                             elseif( count(mutualAdjList[:,3] .== cntry1*cntry2) > 0 )
                                 ind = find(mutualAdjList[:,3] .== cntry1*cntry2)
                                 mutualAdjList[ind,5] += 1
-                                println("in elseif for cntry1*cntry2")
-                                println(mutualAdjList[ind,:])
+                                #println("in elseif for cntry1*cntry2")
+                                #println(mutualAdjList[ind,:])
                             elseif( count(mutualAdjList[:,3] .== cntry2*cntry1) > 0 )
                                 ind = find(mutualAdjList[:,3] .== cntry2*cntry1)
                                 mutualAdjList[ind,5] += 1
-                                println("in elseif for cntry2*cntry1")
-                                println(mutualAdjList[ind,:])
+                                #println("in elseif for cntry2*cntry1")
+                                #println(mutualAdjList[ind,:])
                             else 
                                 mutualAdjList = vcat(mutualAdjList,[cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
-                                println("in else new row addition")
-                                println([cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
+                                #println("in else new row addition")
+                                #println([cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
                             end
                         end
                     end
@@ -441,7 +461,7 @@ function countryMutualEdgesTotal(wAGLOW)
         cntry1 = mutualAdjList[ii,1]
         cntry2 = mutualAdjList[ii,2]
         weight = mutualAdjList[ii,5]
-        edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=$(weight)];")
+        edges = string(edges,cntry1,"->",cntry2," [dir=both color=red penwidth=$(weight)];")
     end    
     println(mutualAdjList)                               
     #edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=$(weight)];")
