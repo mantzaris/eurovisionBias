@@ -397,7 +397,7 @@ function countryMutualEdgesTotal(wAGLOW)
     mutualAdjList = []
     for kk in keys(wAGLOW)
         if(kk[1] == '1')
-            sigAdjList = wAGLOW[kk]["thresholdSigAdjList"]
+            sigAdjList = wAGLOW[kk]["thresholdSigAdjList"]#every time window there will be at most 1 mutual edge
             
             for ii in 1:size(sigAdjList,1)
                 if(sigAdjList[ii,3] > 0)            
@@ -409,25 +409,32 @@ function countryMutualEdgesTotal(wAGLOW)
                             cntry2 = fixBadChars(cntry2)
                             #must only add a row if it is not already in there
                             #permuted possible orderings as a concatenation
-                            if( count(mutualAdjList[:,3] .== cntry1*cntry2) > 0 )
+                            #println(mutualAdjList)
+                            if( isempty(mutualAdjList) )
+                                mutualAdjList = vcat(mutualAdjList,[cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
+                                println("in if for isempty")
+                                println([cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
+                            elseif( count(mutualAdjList[:,3] .== cntry1*cntry2) > 0 )
                                 ind = find(mutualAdjList[:,3] .== cntry1*cntry2)
-                                mutualAdjList[ind,4] += 1
-                                
+                                mutualAdjList[ind,5] += 1
+                                println("in elseif for cntry1*cntry2")
+                                println(mutualAdjList[ind,:])
                             elseif( count(mutualAdjList[:,3] .== cntry2*cntry1) > 0 )
                                 ind = find(mutualAdjList[:,3] .== cntry2*cntry1)
-                                mutualAdjList[ind,4] += 1
-                                
+                                mutualAdjList[ind,5] += 1
+                                println("in elseif for cntry2*cntry1")
+                                println(mutualAdjList[ind,:])
                             else 
                                 mutualAdjList = vcat(mutualAdjList,[cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
-                                
+                                println("in else new row addition")
+                                println([cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
                             end
                         end
                     end
                 end            
             end        
         end
-    end
-    
+    end    
     #look at every first occurance and burn the downstream similar ones counting their contribution
     #and pass over the first so that the end of the down stream jj loop has the edge added in 
     for ii in 1:size(mutualAdjList,1)
@@ -435,11 +442,8 @@ function countryMutualEdgesTotal(wAGLOW)
         cntry2 = mutualAdjList[ii,2]
         weight = mutualAdjList[ii,5]
         edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=$(weight)];")
-    end
-    
-    println(mutualAdjList)               
-
-                
+    end    
+    println(mutualAdjList)                               
     #edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=$(weight)];")
     return edges#string("France","->","Greece"," [ color=red penwidth=3];")        
 end
