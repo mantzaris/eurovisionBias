@@ -56,10 +56,6 @@ function produceTotalOneWayGraphs(wAGLOW)
     years = sort(years)
     yearMin = parse(Int,years[1])    
     yearMax = parse(Int,years[end])    
-    println(yearMin)
-    println(yearMax)
-    println(length(years))
-    println(years)
     if(length(years)>2)
         winYears = convert(Int, (yearMax - yearMin) / (length(years)-2))
     else
@@ -388,7 +384,62 @@ function countryNodeDescriptorsTotalMutualAvoid(wAGLOW)
                 end        
             end
         end
+    end    
+    return nodes
+end
+
+
+#look not for the total edges between, but the times the mutual avoid coincided
+function countryMutualEdgesTotal(wAGLOW)
+    edges = ""
+    #store in an adj list the country pairings, I will add the edges in incrementally in a stack like adjlist
+    #their order
+    mutualAdjList = []
+    for kk in keys(wAGLOW)
+        if(kk[1] == '1')
+            sigAdjList = wAGLOW[kk]["thresholdSigAdjList"]
+            
+            for ii in 1:size(sigAdjList,1)
+                if(sigAdjList[ii,3] > 0)            
+                    for jj in ii+1:size(sigAdjList,1)
+                        if( (sigAdjList[ii,1]==sigAdjList[jj,2]) && (sigAdjList[ii,2]==sigAdjList[jj,1]) && (sigAdjList[jj,3] > 0))
+                            cntry1 = sigAdjList[ii,1]
+                            cntry1 = fixBadChars(cntry1)
+                            cntry2 = sigAdjList[ii,2]
+                            cntry2 = fixBadChars(cntry2)
+                            #must only add a row if it is not already in there
+                            #permuted possible orderings as a concatenation
+                            if( count(mutualAdjList[:,3] .== cntry1*cntry2) > 0 )
+                                ind = find(mutualAdjList[:,3] .== cntry1*cntry2)
+                                mutualAdjList[ind,4] += 1
+                                
+                            elseif( count(mutualAdjList[:,3] .== cntry2*cntry1) > 0 )
+                                ind = find(mutualAdjList[:,3] .== cntry2*cntry1)
+                                mutualAdjList[ind,4] += 1
+                                
+                            else 
+                                mutualAdjList = vcat(mutualAdjList,[cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
+                                
+                            end
+                        end
+                    end
+                end            
+            end        
+        end
     end
     
-    return nodes
+    #look at every first occurance and burn the downstream similar ones counting their contribution
+    #and pass over the first so that the end of the down stream jj loop has the edge added in 
+    for ii in 1:size(mutualAdjList,1)
+        cntry1 = mutualAdjList[ii,1]
+        cntry2 = mutualAdjList[ii,2]
+        weight = mutualAdjList[ii,5]
+        edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=$(weight)];")
+    end
+    
+    println(mutualAdjList)               
+
+                
+    #edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=$(weight)];")
+    return edges#string("France","->","Greece"," [ color=red penwidth=3];")        
 end
