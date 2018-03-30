@@ -17,11 +17,11 @@ other = ["Australia"]
 function graphAvoid(wAGLOW)
 
     #produce the graph images from the one way avoid biases
-    #produceOneWayGraphs(wAGLOW)
+    produceOneWayGraphs(wAGLOW)
     #produce the graph images from the total one way avoids
-    #produceTotalOneWayGraphs(wAGLOW)
+    produceTotalOneWayGraphs(wAGLOW)
     #produce the mutual Avoid/Neglect
-    #produceMutualTwoWayGraphs(wAGLOW)
+    produceMutualTwoWayGraphs(wAGLOW)
     #produce the total mutual avoid count graph
     produceTotalMutualTwoWayGraphs(wAGLOW)
 end
@@ -48,7 +48,7 @@ function produceTotalOneWayGraphs(wAGLOW)
     networkInit = string(networkInit, "}")
 
     #name for the dot file name and the network file name and output image
-    keys1 = [(if(kk[1]=='1'); kk;end)  for kk in keys(wAGLOW)]
+    keys1 = [(if(kk[1]=='1' || kk[1] == '2'); kk;end)  for kk in keys(wAGLOW)]
     keys1 = keys1[keys1 .!= nothing]
     yearsWin = [split(k1,"-") for k1 in keys1]
     years = vcat(yearsWin)
@@ -234,7 +234,7 @@ function regionNodeString(countryInput)
     elseif(countryInput in central)
         nodeStr = " [style=filled,fillcolor=gray]; "
     elseif(countryInput in southEast)
-        nodeStr = " [style=filled,fillcolor=darkgoldenrod1]; "
+        nodeStr = " [style=filled,fillcolor=darkgoldenrod1]; "    
     elseif(countryInput in other)        
         nodeStr = " [style=filled,fillcolor=whitesmoke]; "
     else
@@ -254,7 +254,7 @@ end
 #from the dictionary produce the Mutual Avoids for the time windows in the dictionary keys
 function produceMutualTwoWayGraphs(wAGLOW)
     for kk in keys(wAGLOW)
-        if(kk[1] == '1')
+        if(kk[1] == '1' || kk[1] == '2')
             #make it a digraph for bi directional edges
             networkInit = "digraph avoid {  "    
 
