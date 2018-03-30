@@ -3,12 +3,12 @@
 
 #have the init set up the arrays of the country region labels
 southWest = ["Portugal","Spain","Malta","SanMarino","Andorra","Monaco","Morocco","Italy"]
-    north = ["Iceland","Denmark","Norway","Sweden","Finland"]
-    northWest = ["UnitedKingdom","Ireland","Belgium","France","Luxembourg"]
-    central = ["Germany","Austria","TheNetherlands","Switzerland","Slovenia","CzechRepublic","Hungary","Slovakia"]
-    southEast = ["Greece","Montenegro","Cyprus","Albania","Bulgaria","Croatia","BosniaHerzegovina","Turkey","FYRMacedonia","Romania","Serbia","Israel","Yugoslavia","SerbiaMontenegro"]
+north = ["Iceland","Denmark","Norway","Sweden","Finland"]
+northWest = ["UnitedKingdom","Ireland","Belgium","France","Luxembourg"]
+central = ["Germany","Austria","TheNetherlands","Switzerland","Slovenia","CzechRepublic","Hungary","Slovakia"]
+southEast = ["Greece","Montenegro","Cyprus","Albania","Bulgaria","Croatia","BosniaHerzegovina","Turkey","FYRMacedonia","Romania","Serbia","Israel","Yugoslavia","SerbiaMontenegro"]
 east = ["Russia","Ukraine","Moldova","Belarus","Poland","Georgia","Armenia","Azerbaijan","Estonia","Lithuania","Latvia"]
-
+other = ["Australia"]
 #each dictionary has the keys
 #countriesNamesTotal
 #thresholdSignificantAdjListTOTAL
@@ -56,12 +56,12 @@ function produceTotalOneWayGraphs(wAGLOW)
     years = sort(years)
     yearMin = parse(Int,years[1])    
     yearMax = parse(Int,years[end])    
-    if(length(years)>2)
+    #=if(length(years)>2)
         winYears = convert(Int, (yearMax - yearMin) / (length(years)-2))
     else
         winYears = (yearMax - yearMin)
-    end
-    
+    end=#
+    winYears = wAGLOW["windowSize"]
     alpha = wAGLOW["alpha"]
     fileName = string("networkAvoidTotal",yearMin,"to",yearMax,"win",winYears,"alpha",alpha)
     writeGraphViz(fileName, networkInit)
@@ -235,6 +235,8 @@ function regionNodeString(countryInput)
         nodeStr = " [style=filled,fillcolor=gray]; "
     elseif(countryInput in southEast)
         nodeStr = " [style=filled,fillcolor=darkgoldenrod1]; "
+    elseif(countryInput in other)        
+        nodeStr = " [style=filled,fillcolor=whitesmoke]; "
     else
         
         print("country to region not found: ")
@@ -350,11 +352,13 @@ function produceTotalMutualTwoWayGraphs(wAGLOW)
     years = sort(years)
     yearMin = parse(Int,years[1])    
     yearMax = parse(Int,years[end])    
-    if(length(years)>2)
+    
+    #=if(length(years)>2)
         winYears = convert(Int, (yearMax - yearMin) / (length(years)-2))
     else
         winYears = (yearMax - yearMin)
-    end
+    end=#
+    winYears = wAGLOW["windowSize"]
     
     alpha = wAGLOW["alpha"]
     fileName = string("networkMutualAvoidTotal",yearMin,"to",yearMax,"win",winYears,"alpha",alpha)
