@@ -40,7 +40,7 @@ function produceTotalOneWayGraphs(wAGLOW)
     println(networkInit)
 
     #buildup the edges and edge attributes
-    sigStr = countryEdgesTotal(wAGLOW["thresholdSignificantAdjListTOTAL"])
+    sigStr = countryEdgesTotal(wAGLOW["thresholdSignificantAdjListTOTAL"],wAGLOW["side"])
     networkInit = string(networkInit,sigStr)
     println(networkInit)
     
@@ -72,7 +72,7 @@ end
 
 #construct the string of the country pairs and the edge attributes
 #takes an AdjList from the total window set
-function countryEdgesTotal(sigAdjList)
+function countryEdgesTotal(sigAdjList,side)
     edges = ""
     for ii in 1:size(sigAdjList,1)
         if(sigAdjList[ii,3] > 0)
@@ -81,7 +81,12 @@ function countryEdgesTotal(sigAdjList)
             cntry2 = sigAdjList[ii,2]
             cntry2 = fixBadChars(cntry2)
             weight = sigAdjList[ii,3]
-            edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=$(weight)];")
+            if(side == "Lower")
+                edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=$(weight)];")
+            else
+                edges = string(edges,cntry1,"->",cntry2," [ color=blue penwidth=$(weight)];")
+            end
+            
         end
         
     end
@@ -106,7 +111,7 @@ function produceOneWayGraphs(wAGLOW)
             networkInit = string(networkInit, nodeDescriptions)
 
             #buildup the edges and edge attributes
-            sigStr = countryEdges(wAGLOW[kk]["thresholdSigAdjList"])
+            sigStr = countryEdges(wAGLOW[kk]["thresholdSigAdjList"],wAGLOW["side"])
             networkInit = string(networkInit,sigStr)
 
             #finalize the network dscription by the final identifier
@@ -126,7 +131,7 @@ end
 
 #construct the string of the country pairs and the edge attributes
 #takes an AdjList
-function countryEdges(sigAdjList)
+function countryEdges(sigAdjList,side)
     edges = ""
     for ii in 1:size(sigAdjList,1)
         if(sigAdjList[ii,3] > 0)
@@ -134,7 +139,12 @@ function countryEdges(sigAdjList)
             cntry1 = fixBadChars(cntry1)
             cntry2 = sigAdjList[ii,2]
             cntry2 = fixBadChars(cntry2)
-            edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=1];")
+            if(side == "Lower")
+                edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=1];")
+            else
+                edges = string(edges,cntry1,"->",cntry2," [ color=blue penwidth=1];")
+            end
+            
         end
         
     end
@@ -265,7 +275,7 @@ function produceMutualTwoWayGraphs(wAGLOW)
             networkInit = string(networkInit, nodeDescriptions)
 
             #buildup the edges and edge attributes
-            sigStr = countryEdgesMutual(wAGLOW[kk]["thresholdSigAdjList"])
+            sigStr = countryEdgesMutual(wAGLOW[kk]["thresholdSigAdjList"],wAGLOW["side"])
             networkInit = string(networkInit,sigStr)
 
             #finalize the network dscription by the final identifier
@@ -306,18 +316,23 @@ end
 
 #construct the string of the country pairs and the edge attributes
 #takes an AdjList
-function countryEdgesMutual(sigAdjList)
+function countryEdgesMutual(sigAdjList,side)
     edges = ""
     for ii in 1:size(sigAdjList,1)
         if(sigAdjList[ii,3] > 0)
             
             for jj in ii+1:size(sigAdjList,1)
                 if( (sigAdjList[ii,1]==sigAdjList[jj,2]) && (sigAdjList[ii,2]==sigAdjList[jj,1]) && (sigAdjList[jj,3] > 0))
-                cntry1 = sigAdjList[ii,1]
-                cntry1 = fixBadChars(cntry1)
-                cntry2 = sigAdjList[ii,2]
-                cntry2 = fixBadChars(cntry2)           
-                edges = string(edges,cntry1,"->",cntry2," [dir=both color=red penwidth=1];")
+                    cntry1 = sigAdjList[ii,1]
+                    cntry1 = fixBadChars(cntry1)
+                    cntry2 = sigAdjList[ii,2]
+                    cntry2 = fixBadChars(cntry2)
+                    if(side == "Lower")
+                        edges = string(edges,cntry1,"->",cntry2," [dir=both color=red penwidth=1];")
+                    else
+                        edges = string(edges,cntry1,"->",cntry2," [dir=both color=blue penwidth=1];")
+                    end
+                    
                 end
             end
             
@@ -467,11 +482,17 @@ function countryMutualEdgesTotal(wAGLOW)
     end    
     #look at every first occurance and burn the downstream similar ones counting their contribution
     #and pass over the first so that the end of the down stream jj loop has the edge added in 
+    side = wAGLOW["side"]
     for ii in 1:size(mutualAdjList,1)
         cntry1 = mutualAdjList[ii,1]
         cntry2 = mutualAdjList[ii,2]
         weight = mutualAdjList[ii,5]
-        edges = string(edges,cntry1,"->",cntry2," [dir=both color=red penwidth=$(weight)];")
+        if(side == "Lower")
+            edges = string(edges,cntry1,"->",cntry2," [dir=both color=red penwidth=$(weight)];")
+        else
+            edges = string(edges,cntry1,"->",cntry2," [dir=both color=blue penwidth=$(weight)];")
+        end
+        
     end    
     println(mutualAdjList)                               
     #edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=$(weight)];")
