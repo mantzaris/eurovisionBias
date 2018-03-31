@@ -63,7 +63,8 @@ function produceTotalOneWayGraphs(wAGLOW)
     end=#
     winYears = wAGLOW["windowSize"]
     alpha = wAGLOW["alpha"]
-    fileName = string("networkAvoidTotal",yearMin,"to",yearMax,"win",winYears,"alpha",alpha)
+    side = wAGLOW["side"]
+    fileName = string("network",side,"TotalOneWay",yearMin,"to",yearMax,"win",winYears,"alpha",alpha)
     writeGraphViz(fileName, networkInit)
 
 end
@@ -113,7 +114,8 @@ function produceOneWayGraphs(wAGLOW)
 
             alpha = wAGLOW["alpha"]
             #name for the dot file name and the network file name and output image
-            fileName = string("networkAvoidOneWay",kk,"alpha",alpha)
+            side = wAGLOW["side"]
+            fileName = string("network",side,"OneWay",kk,"alpha",alpha)
             writeGraphViz(fileName, networkInit)
         end
         println(kk)
@@ -270,7 +272,9 @@ function produceMutualTwoWayGraphs(wAGLOW)
             networkInit = string(networkInit, "}")
             alpha = wAGLOW["alpha"]
             #name for the dot file name and the network file name and output image
-            fileName = string("networkAvoidTwoWay",kk,"alpha",alpha)
+            side = wAGLOW["side"]
+            
+            fileName = string("network",side,"TwoWay",kk,"alpha",alpha)
             writeGraphViz(fileName, networkInit)
         end
         println(kk)
@@ -361,7 +365,9 @@ function produceTotalMutualTwoWayGraphs(wAGLOW)
     winYears = wAGLOW["windowSize"]
     
     alpha = wAGLOW["alpha"]
-    fileName = string("networkMutualAvoidTotal",yearMin,"to",yearMax,"win",winYears,"alpha",alpha)
+    side = wAGLOW["side"]
+    
+    fileName = string("networkMutual",side,"Total",yearMin,"to",yearMax,"win",winYears,"alpha",alpha)
     writeGraphViz(fileName, networkInit)
     
     

@@ -52,7 +52,8 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
     winAggDictLower["alpha"] = alpha
     winAggDictUpper["windowSize"] = windowSize
     winAggDictLower["windowSize"] = windowSize
-    
+    winAggDictUpper["side"] = "Upper"
+    winAggDictLower["side"] = "Lower"
     
     return [winAggDictUpper,winAggDictLower]
 end
