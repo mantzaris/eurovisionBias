@@ -35,7 +35,7 @@ function produceTotalOneWayGraphs(wAGLOW)
     networkInit = "digraph avoid {  "    
     
     #pass the dictionary to obtain the graphviz string for the node descriptions (attributes color etc)
-    nodeDescriptions = countryNodeDescriptorsTotal(wAGLOW)
+    nodeDescriptions = countryNodeDescriptorsTotalOneWay(wAGLOW)
     networkInit = string(networkInit, nodeDescriptions)
     println(networkInit)
 
@@ -192,19 +192,41 @@ end
 
 
 #add the components of the country names and the descriptors
-function countryNodeDescriptorsTotal(wAGLOW)
+#produceTotalOneWayGraphs(wAGLOW)!!!XXX
+function countryNodeDescriptorsTotalOneWay(wAGLOW)
     nodeDescriptor = ""
-    countriesNamesTotal = wAGLOW["countriesNamesTotal"]#dict_wAG["countriesNamesTotal"]
-    println(countriesNamesTotal)
-    
+    nodes = ""
+    seen = []    
+    #countriesNamesTotal = wAGLOW["countriesNamesTotal"]#dict_wAG["countriesNamesTotal"]
+    #println(countriesNamesTotal)
+    for kk in keys(wAGLOW)
+        if(kk[1] == '1' || kk[1] == '2')
+            (wAGLOW[kk]["thresholdSigAdjList"])
+            
+            sigAdjList = wAGLOW[kk]["thresholdSigAdjList"]
+            
+            for ii in 1:size(sigAdjList,1)
+                if(sigAdjList[ii,3] > 0)         
+                    cntry1 = sigAdjList[ii,1]
+                    cntry1 = fixBadChars(cntry1)
+                    if( (count(seen[:] .== cntry1) == 0) )
+                        nodeTmp1 = regionNodeString(cntry1)                                
+                        nodes = string(nodes,cntry1,nodeTmp1)
+                        seen = vcat(seen,cntry1)
+                    end
+                end
+            end    
+        end
+    end
+    #=
     countriesNamesTotal = removeBadChars(countriesNamesTotal)
     for ii in 1:length(countriesNamesTotal)
         tmpCountry = countriesNamesTotal[ii]
         nodeDescTmp = regionNodeString(tmpCountry)
         nodeDescriptor = string(nodeDescriptor,tmpCountry,nodeDescTmp)
     end
-    
-    return nodeDescriptor
+    =#    
+    return nodes#nodeDescriptor
 end
 
 
