@@ -15,7 +15,7 @@ other = ["Australia"]
 #Window spans-> countries | thresholdSigAdjList | avgScoreAggregateAdjList | scoreAggregateAdjList
 #make a function to start the graph
 function graphAvoid(wAGLOW)
-
+    
     #produce the graph images from the one way avoid biases
     produceOneWayGraphs(wAGLOW)
     #produce the graph images from the total one way avoids

@@ -14,6 +14,7 @@ using GraphViz
 #csvDir2AdjList.jl is the file with functions to call upon the real data to get the aggregates
 include("csvDir2AdjList.jl")
 
+
 #>>MAIN<<
 function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
 
