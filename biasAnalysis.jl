@@ -11,9 +11,58 @@ other = ["Australia"]
 
 
 #so I am going to put in a dictionary pair tuple, for the low and high/upper. this will first look at a single window and count the NEGLECT total and then the PREFERENCE significance. printout the total for NEGLECT AND PREFERENCE : (RECEIVE AND PRODUCE)
+#this function will need the aggregate neglect/avoid and the aggregate prefer biases
+#before we needed the network connectivity and now we need aggregate for each country label
+
+#for each country produce an array/matrix for the total bias in/out
+function produceSingleWindowPref(wAG)
+    #for each window the total in/out of each country
+    countryDictTotalsOut = Dict()
+    
+    for kk in keys(wAG)
+        if(kk[1] == '1')
+            countryDictTotalsOut[kk] = Dict()#just putting the totals of each country
+            countryDictTotalsOut[kk]["out"] = Dict()
+            countryDictTotalsOut[kk]["in"] = Dict()
+            sigAdjList = wAG[kk]["thresholdSigAdjList"]
+
+            for ii in 1:size(sigAdjList,1)
+                if(sigAdjList[ii,3] > 0)
+                    cntry1 = sigAdjList[ii,1]
+                    cntry1 = fixBadChars(cntry1)
+                    cntry2 = sigAdjList[ii,2]
+                    cntry2 = fixBadChars(cntry2)
+                    #one country
+                    if( isempty(countryDictTotalsOut[kk]["out"]) || !haskey(countryDictTotalsOut[kk]["out"],cntry1) )
+                        countryDictTotalsOut[kk]["out"][cntry1] = 1
+                    else
+                        countryDictTotalsOut[kk]["out"][cntry1] += 1
+                    end
+                    if( isempty(countryDictTotalsOut[kk]["in"]) || !haskey(countryDictTotalsOut[kk]["in"],cntry2) )
+                        countryDictTotalsOut[kk]["in"][cntry2] = 1
+                    else
+                        countryDictTotalsOut[kk]["in"][cntry2] += 1
+                    end
+                    
+                end
+            end
+            
+        end
+        
+    end           
+    return countryDictTotalsOut
+end
 
 
 
+function fixBadChars(str_Pre)
+       
+    strPre = replace(str_Pre,"&","")
+    strPre = replace(strPre,".","")
+    strPre =  replace(strPre," ","")
+        
+    return strPre
+end
 
 
 
