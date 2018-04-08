@@ -34,7 +34,8 @@ end
 function plotOutIn(outInDict)
     
     # scatter(x,y,markersize=6,c=:orange)   scatter(x,y,markersize=6,c=:orange,leg=false)
-    s1=[]
+    s1 = []
+    ss = 0
     println(isempty(s1))
     for winKey in keys(outInDict)#time window keys
         println(winKey)
@@ -50,31 +51,22 @@ function plotOutIn(outInDict)
             if(haskey(winDict["in"],countriesWin[cW]))
                 inDeg = winDict["in"][countriesWin[cW]]
             end
-            println([outDeg inDeg])
-            if( isempty(s1) )
+            println([countriesWin[cW] outDeg inDeg])
+            if( ss == 0 )
+                ss += 1
+                s1 =scatter([outDeg],[inDeg],markersize=6,c=:orange,leg=false)
                 #s1 = scatter([1],[2],markersize=6,c=:orange,leg=false)
             else
+                scatter!([outDeg],[inDeg],markersize=6,c=:orange,leg=false)
+            #    s1 =scatter([outDeg],[inDeg])
                 #scatter!([outDeg],[inDeg],markersize=6,c=:orange,leg=false)
             end
         end        
+        display(s1)
         
-        for ioKey in keys(winDict)#in/out
-            println(ioKey)
-            ioDict = winDict[ioKey]
-            
-            for ic in 5:9
-                if(ic==5)
-
-#                    s1 = scatter([ic],[ic],markersize=6,c=:orange,leg=false)
-                    println("init")
-                else
-                    #scatter!([ic],[ic],markersize=6,c=:orange,leg=false)
-                end
-            end
-        end
     end
     
-    display(s1)
+#    display(s1)
     #scatter!(x.+39,y,markersize=6,c=:red,leg=false)
     #scatter!(xguide="x axis" , yguide="y axis")
     #lblz = [string(x[i]) for i in 1:length(x)] scatter!(x,y,series_annotations=lblz)
