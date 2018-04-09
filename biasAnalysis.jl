@@ -27,17 +27,17 @@ function analyzeBiases(wAG)
     #instead of getting an array, consistently deal with the dict
     #having a multidimensional array is order dependent and even if we do create it being dependent upon it instead of
     #dict dump data may not be long term wise as the searching is not always intuitive
-    plotOutIn(countryDictTotalsOutIn,wAG["side"])
+    plotOutIn(countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
 
 end
 
-function plotOutIn(outInDict,side)
-    
-    # scatter(x,y,markersize=6,c=:orange)   scatter(x,y,markersize=6,c=:orange,leg=false)
+function plotOutIn(outInDict,side,windowSize,alpha)
+        
     s1 = []
-    ss = 0
+    
     println(isempty(s1))
     for winKey in keys(outInDict)#time window keys
+        ss = 0
         println(winKey)
         winDict = outInDict[winKey]
         countriesWin = unique(vcat(collect(keys(winDict["out"])),collect(keys(winDict["in"]))))
@@ -54,11 +54,9 @@ function plotOutIn(outInDict,side)
             println([countriesWin[cW] outDeg inDeg])
             if( ss == 0 )
                 ss += 1
-                s1 =scatter([outDeg],[inDeg],markersize=7,c=:orange,leg=false)
-                
+                s1 =scatter([outDeg],[inDeg],markersize=8,c=:black,leg=false,overwrite_figure=false)                
             else
-                scatter!([outDeg],[inDeg],markersize=7,c=:orange,leg=false)
-            
+                scatter!([outDeg],[inDeg],markersize=8,c=:black,leg=false)            
             end
         end
         if(side == "Lower")
@@ -66,13 +64,14 @@ function plotOutIn(outInDict,side)
         else
             scatter!(title=string("significant edges of preference $(winKey)"))
         end
-        scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="outdegree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))#scatter!(xguide="x axis" , yguide="y axis")xlabel="outdegree"
+        scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))#scatter!(xguide="x axis" , yguide="y axis")xlabel="outdegree"
         display(s1)
-        
-    end
-        
-    # scatter!(title="The neglect in or out")
-        
+        tmp = ""
+        side == "Lower" ? tmp="Neglect":tmp="Prefer"
+        filename = string("scatter",tmp,"SingleWin",winKey,"win",windowSize,"alpha",alpha,".png")
+        savefig("./plots/$filename")
+        ss = 0
+    end                    
 end
 
 
@@ -84,7 +83,7 @@ function produceSingleWindowsOutIn(wAG)
     countryDictTotalsOutIn = Dict()
     
     for kk in keys(wAG)
-        if(kk[1] == '1')
+        if(kk[1] == '1' || kk[1] == '2')
             countryDictTotalsOutIn[kk] = Dict()#just putting the totals of each country
             countryDictTotalsOutIn[kk]["out"] = Dict()
             countryDictTotalsOutIn[kk]["in"] = Dict()
