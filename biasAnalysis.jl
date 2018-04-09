@@ -27,11 +27,11 @@ function analyzeBiases(wAG)
     #instead of getting an array, consistently deal with the dict
     #having a multidimensional array is order dependent and even if we do create it being dependent upon it instead of
     #dict dump data may not be long term wise as the searching is not always intuitive
-    plotOutIn(countryDictTotalsOutIn)
+    plotOutIn(countryDictTotalsOutIn,wAG["side"])
 
 end
 
-function plotOutIn(outInDict)
+function plotOutIn(outInDict,side)
     
     # scatter(x,y,markersize=6,c=:orange)   scatter(x,y,markersize=6,c=:orange,leg=false)
     s1 = []
@@ -54,25 +54,25 @@ function plotOutIn(outInDict)
             println([countriesWin[cW] outDeg inDeg])
             if( ss == 0 )
                 ss += 1
-                s1 =scatter([outDeg],[inDeg],markersize=6,c=:orange,leg=false)
-                #s1 = scatter([1],[2],markersize=6,c=:orange,leg=false)
+                s1 =scatter([outDeg],[inDeg],markersize=7,c=:orange,leg=false)
+                
             else
-                scatter!([outDeg],[inDeg],markersize=6,c=:orange,leg=false)
-            #    s1 =scatter([outDeg],[inDeg])
-                #scatter!([outDeg],[inDeg],markersize=6,c=:orange,leg=false)
+                scatter!([outDeg],[inDeg],markersize=7,c=:orange,leg=false)
+            
             end
-        end        
+        end
+        if(side == "Lower")
+            scatter!(title=string("significant edges of neglect $(winKey)"))
+        else
+            scatter!(title=string("significant edges of preference $(winKey)"))
+        end
+        scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="outdegree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))#scatter!(xguide="x axis" , yguide="y axis")xlabel="outdegree"
         display(s1)
         
     end
-    
-#    display(s1)
-    #scatter!(x.+39,y,markersize=6,c=:red,leg=false)
-    #scatter!(xguide="x axis" , yguide="y axis")
-    #lblz = [string(x[i]) for i in 1:length(x)] scatter!(x,y,series_annotations=lblz)
+        
     # scatter!(title="The neglect in or out")
-    
-    
+        
 end
 
 
