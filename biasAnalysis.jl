@@ -29,6 +29,7 @@ function analyzeBiases(wAG)
     #dict dump data may not be long term wise as the searching is not always intuitive
     plotOutIn(countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
 
+    plotOutInTotal(countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
 end
 
 function plotOutIn(outInDict,side,windowSize,alpha)
@@ -153,4 +154,79 @@ function regionNodeString(countryInput)
     end
     
     return nodeStr
+end
+
+
+#look at the total key set and produce an aggregate scatter plot, don't over complicate auto-amigo
+function plotOutInTotal(outInDict,side,windowSize,alpha)
+        
+    s1 = []
+    ss = 0
+    countriesTotal = []
+    for winKey in keys(outInDict)#time window keys, prior making single windows, now just not new?
+        
+        println(winKey)
+        winDict = outInDict[winKey]
+        countriesTotal = append!(countriesTotal,unique(vcat(collect(keys(winDict["out"])),collect(keys(winDict["in"])))))
+        println(countriesTotal)
+        println(typeof(countriesTotal))
+
+    end
+    countriesTotal = unique(countriesTotal)
+    println(countriesTotal)
+
+    #now with total country set, we iterate over them, for each country then inside each key time window
+    #we aggregate and add to the plot of the temp total
+    for cTmp in countriesTotal
+        println(cTmp)
+        outDegT = 0
+        inDegT = 0 
+        for winKey in keys(outInDict)#time window keys, prior making single windows, now just not new?
+            if(haskey(outInDict[winKey]["in"],cTmp))
+                outDegT += outInDict[winKey]["in"][cTmp]
+                println(outInDict[winKey]["in"][cTmp])                
+            end
+            if(haskey(outInDict[winKey]["out"],cTmp))
+                inDegT += outInDict[winKey]["out"][cTmp]
+                println(outInDict[winKey]["out"][cTmp])                
+            end
+            println(winKey)
+        end
+        println([outDegT, inDegT])
+        if( ss == 0 )
+            ss += 1
+            s1 =scatter([outDegT],[inDegT],markersize=8,c=:black,leg=false,overwrite_figure=false) 
+        else
+            scatter!([outDegT],[inDegT],markersize=8,c=:black,leg=false)            
+        end
+    end
+
+    
+    keys1 = [(if(kk[1]=='1' || kk[1] == '2'); kk;end)  for kk in keys(outInDict)]
+    keys1 = keys1[keys1 .!= nothing]
+    yearsWin = [split(k1,"-") for k1 in keys1]
+    years = vcat(yearsWin)
+    years = [j for i in years for j in i]    
+    years = sort(years)
+    yearMin = parse(Int,years[1])    
+    yearMax = parse(Int,years[end])
+    
+    
+    if(side == "Lower")
+        scatter!(title=string("significant Total neglect $yearMin to $yearMax"))
+    else
+        scatter!(title=string("significant Total preference $yearMin to $yearMax"))
+    end
+    
+    scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))#scatter!(xguide="x axis" , yguide="y axis")xlabel="outdegree"
+    display(s1)
+
+
+    tmp = ""
+    side == "Lower" ? tmp="Neglect":tmp="Prefer"
+    filename = string("scatter",tmp,"TotalWin",yearMin,"to",yearMax,"win",windowSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
+
+
+
 end
