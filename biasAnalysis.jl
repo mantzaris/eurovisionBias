@@ -30,19 +30,18 @@ function analyzeBiases(wAG)
     plotOutIn(countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
 
     plotOutInTotal(countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
+
+    #the scatter plot for the countries for the full year set overlap/overlay
+    plotOutInAgg(countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
 end
 
 function plotOutIn(outInDict,side,windowSize,alpha)
-        
-    s1 = []
-    
-    println(isempty(s1))
+            
     for winKey in keys(outInDict)#time window keys
-        ss = 0
-        println(winKey)
+        
         winDict = outInDict[winKey]
         countriesWin = unique(vcat(collect(keys(winDict["out"])),collect(keys(winDict["in"]))))
-        println(countriesWin)
+        scatter(markersize=8,c=:black,leg=false,overwrite_figure=false) 
         for cW in 1:length(countriesWin)
             outDeg = 0
             inDeg = 0 
@@ -51,22 +50,15 @@ function plotOutIn(outInDict,side,windowSize,alpha)
             end
             if(haskey(winDict["in"],countriesWin[cW]))
                 inDeg = winDict["in"][countriesWin[cW]]
-            end
-            println([countriesWin[cW] outDeg inDeg])
-            if( ss == 0 )
-                ss += 1
-                s1 =scatter([outDeg],[inDeg],markersize=8,c=:black,leg=false,overwrite_figure=false)                
-            else
-                scatter!([outDeg],[inDeg],markersize=8,c=:black,leg=false)            
-            end
+            end                        
+            scatter!([outDeg],[inDeg],markersize=8,c=:black,leg=false)                        
         end
         if(side == "Lower")
             scatter!(title=string("significant edges of neglect $(winKey)"))
         else
             scatter!(title=string("significant edges of preference $(winKey)"))
         end
-        scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))#scatter!(xguide="x axis" , yguide="y axis")xlabel="outdegree"
-        display(s1)
+        scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))
         tmp = ""
         side == "Lower" ? tmp="Neglect":tmp="Prefer"
         filename = string("scatter",tmp,"SingleWin",winKey,"win",windowSize,"alpha",alpha,".png")
@@ -159,7 +151,7 @@ end
 
 #look at the total key set and produce an aggregate scatter plot, don't over complicate auto-amigo
 function plotOutInTotal(outInDict,side,windowSize,alpha)
-        
+    
     s1 = []
     ss = 0
     countriesTotal = []
@@ -170,11 +162,11 @@ function plotOutInTotal(outInDict,side,windowSize,alpha)
         countriesTotal = append!(countriesTotal,unique(vcat(collect(keys(winDict["out"])),collect(keys(winDict["in"])))))
         println(countriesTotal)
         println(typeof(countriesTotal))
-
+        
     end
     countriesTotal = unique(countriesTotal)
     println(countriesTotal)
-
+    
     #now with total country set, we iterate over them, for each country then inside each key time window
     #we aggregate and add to the plot of the temp total
     for cTmp in countriesTotal
@@ -200,7 +192,7 @@ function plotOutInTotal(outInDict,side,windowSize,alpha)
             scatter!([outDegT],[inDegT],markersize=8,c=:black,leg=false)            
         end
     end
-
+    
     
     keys1 = [(if(kk[1]=='1' || kk[1] == '2'); kk;end)  for kk in keys(outInDict)]
     keys1 = keys1[keys1 .!= nothing]
@@ -219,7 +211,7 @@ function plotOutInTotal(outInDict,side,windowSize,alpha)
     end
     
     scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))#scatter!(xguide="x axis" , yguide="y axis")xlabel="outdegree"
-    display(s1)
+    #display(s1)
 
 
     tmp = ""
@@ -229,4 +221,53 @@ function plotOutInTotal(outInDict,side,windowSize,alpha)
 
 
 
+end
+
+
+
+#so we have each window's out/in deg for each country
+#we have the acccmulated for each country over each window
+#simple plot that is maybe not useful, but why not have it, before doing the neglect/pref plots:
+#have a scatter accumulation of the countries not as a total but overlay
+function plotOutInAgg(outInDict,side,windowSize,alpha)
+    ss = 0
+    s1 = []    
+    println(isempty(s1))
+    for winKey in keys(outInDict)#time window keys
+        
+        println(winKey)
+        winDict = outInDict[winKey]
+        countriesWin = unique(vcat(collect(keys(winDict["out"])),collect(keys(winDict["in"]))))
+        println(countriesWin)
+        for cW in 1:length(countriesWin)
+            outDeg = 0
+            inDeg = 0 
+            if(haskey(winDict["out"],countriesWin[cW]))
+                outDeg = winDict["out"][countriesWin[cW]]
+            end
+            if(haskey(winDict["in"],countriesWin[cW]))
+                inDeg = winDict["in"][countriesWin[cW]]
+            end
+            #println([countriesWin[cW] outDeg inDeg])
+            if( ss == 0 )
+                ss += 1
+                s1 =scatter([outDeg],[inDeg],markersize=8,c=:black,leg=false,overwrite_figure=false) 
+            else
+                scatter!([outDeg],[inDeg],markersize=8,c=:black,leg=false)            
+            end
+        end                
+    end
+    winKey1 = -1
+    if(side == "Lower")
+        scatter!(title=string("overlap significant edges neglect $(winKey1)"))
+    else
+        scatter!(title=string("overlap significant edges preference $(winKey1)"))
+    end
+    scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))#scatter!(xguide="x axis" , yguide="y axis")xlabel="outdegree"
+    #display(s1)
+    tmp = ""
+    side == "Lower" ? tmp="Neglect":tmp="Prefer"
+    filename = string("scatter",tmp,"AggregateWin",winKey1,"win",windowSize,"alpha",alpha,".png")
+    #savefig("./plots/$filename")
+    #ss = 0#one fig only
 end
