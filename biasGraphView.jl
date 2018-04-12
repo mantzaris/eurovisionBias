@@ -101,13 +101,12 @@ end
 #from the dictionary produce the one way Avoids for the time windows in the dictionary keys
 function produceOneWayGraphs(wAGLOW)
     for kk in keys(wAGLOW)
-        if(kk[1] == '1')
-            #make it a digraph for bi directional edges
+        if(kk[1] == '1' || kk[1] == '2')
             #No label as it is hard to predict the relative size of the font for the final output imae
             networkInit = "digraph avoid {  "    
 
             #pass the dictionary to obtain the graphviz string for the node descriptions (attributes color etc)
-            nodeDescriptions = countryNodeDescriptors(wAGLOW[kk])
+            nodeDescriptions = countryNodeDescriptorsOneWay(wAGLOW[kk])
             networkInit = string(networkInit, nodeDescriptions)
 
             #buildup the edges and edge attributes
@@ -127,6 +126,43 @@ function produceOneWayGraphs(wAGLOW)
     end    
 end
 
+#add the components of the country names and the descriptors for the one-way
+#remove the non-participants
+function countryNodeDescriptorsOneWay(dict_wAG)
+    nodeDescriptor = ""
+    countriesNamesTotal = dict_wAG["countries"]#dict_wAG["countriesNamesTotal"]
+    println(countriesNamesTotal)
+
+    sigAdj = dict_wAG["thresholdSigAdjList"]
+    
+    countriesNamesTotal = removeBadChars(countriesNamesTotal)
+    for ii in 1:length(countriesNamesTotal)
+       
+        tmpCountry = countriesNamesTotal[ii]       
+        for sigRow in 1:size(sigAdj,1)
+            if(fixBadChars(sigAdj[sigRow,1]) == tmpCountry && sigAdj[sigRow,3] > 0)               
+                nodeDescTmp = regionNodeString(tmpCountry)               
+                nodeDescriptor = string(nodeDescriptor,tmpCountry,nodeDescTmp)                
+                break
+            elseif(fixBadChars(sigAdj[sigRow,2]) == tmpCountry && sigAdj[sigRow,3] > 0)               
+                nodeDescTmp = regionNodeString(tmpCountry)               
+                nodeDescriptor = string(nodeDescriptor,tmpCountry,nodeDescTmp)               
+                break
+            end            
+       end
+    end
+    
+    return nodeDescriptor
+end
+#=
+cntry1 = sigAdjList[ii,1]
+cntry1 = fixBadChars(cntry1)
+if( (count(seen[:] .== cntry1) == 0) )
+nodeTmp1 = regionNodeString(cntry1)                                
+nodes = string(nodes,cntry1,nodeTmp1)
+seen = vcat(seen,cntry1)
+end
+=#
 
 
 #construct the string of the country pairs and the edge attributes
@@ -192,13 +228,12 @@ end
 
 
 #add the components of the country names and the descriptors
-#produceTotalOneWayGraphs(wAGLOW)!!!XXX
+#produceTotalOneWayGraphs(wAGLOW)!!!
 function countryNodeDescriptorsTotalOneWay(wAGLOW)
     nodeDescriptor = ""
     nodes = ""
     seen = []    
     #countriesNamesTotal = wAGLOW["countriesNamesTotal"]#dict_wAG["countriesNamesTotal"]
-    #println(countriesNamesTotal)
     for kk in keys(wAGLOW)
         if(kk[1] == '1' || kk[1] == '2')
             (wAGLOW[kk]["thresholdSigAdjList"])
@@ -214,18 +249,20 @@ function countryNodeDescriptorsTotalOneWay(wAGLOW)
                         nodes = string(nodes,cntry1,nodeTmp1)
                         seen = vcat(seen,cntry1)
                     end
+                    #if only receive
+                    cntry2 = sigAdjList[ii,2]
+                    cntry2 = fixBadChars(cntry2)
+                    if( (count(seen[:] .== cntry2) == 0) )
+                        nodeTmp2 = regionNodeString(cntry2)                                
+                        nodes = string(nodes,cntry2,nodeTmp2)
+                        seen = vcat(seen,cntry2)
+                    end
+
                 end
+                                
             end    
         end
     end
-    #=
-    countriesNamesTotal = removeBadChars(countriesNamesTotal)
-    for ii in 1:length(countriesNamesTotal)
-        tmpCountry = countriesNamesTotal[ii]
-        nodeDescTmp = regionNodeString(tmpCountry)
-        nodeDescriptor = string(nodeDescriptor,tmpCountry,nodeDescTmp)
-    end
-    =#    
     return nodes#nodeDescriptor
 end
 
@@ -279,8 +316,6 @@ function regionNodeString(countryInput)
     
     return nodeStr
 end
-
-
 
 
 #NOW FOR THE MUTUAL ONE WAY
@@ -520,3 +555,15 @@ function countryMutualEdgesTotal(wAGLOW)
     #edges = string(edges,cntry1,"->",cntry2," [ color=red penwidth=$(weight)];")
     return edges#string("France","->","Greece"," [ color=red penwidth=3];")        
 end
+
+
+
+
+#=
+countriesNamesTotal = removeBadChars(countriesNamesTotal)
+for ii in 1:length(countriesNamesTotal)
+tmpCountry = countriesNamesTotal[ii]
+nodeDescTmp = regionNodeString(tmpCountry)
+nodeDescriptor = string(nodeDescriptor,tmpCountry,nodeDescTmp)
+end
+=#    
