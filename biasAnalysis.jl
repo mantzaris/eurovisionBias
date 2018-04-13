@@ -32,7 +32,7 @@ function analyzeBiases(wAG)
     plotOutInTotal(countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
 
     #the scatter plot for the countries for the full year set overlap/overlay
-    plotOutInAgg(countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
+    plotOutInAgg(wAG,countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
 
     #the scatter plot from the thresholdSignificantAdjListTOTAL
     totalTimeInOutScatter(wAG)
@@ -233,7 +233,7 @@ end
 #we have the acccmulated for each country over each window
 #simple plot that is maybe not useful, but why not have it, before doing the neglect/pref plots:
 #have a scatter accumulation of the countries not as a total but overlay
-function plotOutInAgg(outInDict,side,windowSize,alpha)
+function plotOutInAgg(wAG,outInDict,side,windowSize,alpha)
     ss = 0
     s1 = []    
     println(isempty(s1))
@@ -261,27 +261,20 @@ function plotOutInAgg(outInDict,side,windowSize,alpha)
             end
         end                
     end
-    keys1 = [(if(kk[1]=='1' || kk[1] == '2'); kk;end)  for kk in keys(outInDict)]
-    keys1 = keys1[keys1 .!= nothing]
-    yearsWin = [split(k1,"-") for k1 in keys1]
-    years = vcat(yearsWin)
-    years = [j for i in years for j in i]    
-    years = sort(years)
-    yearMin = parse(Int,years[1])    
-    yearMax = parse(Int,years[end])
 
+    yearMin,yearMax = getYearsMinMax(wAG)
     winKey1 = -1
     if(side == "Lower")
-        scatter!(title=string("overlap significant edges neglect $(winKey1)"))
+        scatter!(title=string("overlap significant edges neglect $(yearMin)-$(yearMax)"))
     else
-        scatter!(title=string("overlap significant edges preference $(winKey1)"))
+        scatter!(title=string("overlap significant edges preference $(yearMin)-$(yearMax)"))
     end
     scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))#scatter!(xguide="x axis" , yguide="y axis")xlabel="outdegree"
     #display(s1)
     tmp = ""
     side == "Lower" ? tmp="Neglect":tmp="Prefer"
-    filename = string("scatter",tmp,"AggregateWin",winKey1,"win",windowSize,"alpha",alpha,".png")
-    #savefig("./plots/$filename")
+    filename = string("scatter",tmp,"AggregateWin",yearMin,"-",yearMax,"win",windowSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
     #ss = 0#one fig only
 end
 #!!!XXX
