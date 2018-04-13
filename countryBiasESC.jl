@@ -19,7 +19,8 @@ include("csvDir2AdjList.jl")
 function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
 
     #load data and get the dictionary for the country num per year
-    #looks at the whole dataset of score files and reads the header to return a dictionary for the year->countrynumber, min year, max year
+    #looks at the whole dataset of score files and reads the header to return a dictionary for the year->countrynumber,
+    #min year, max year
     countryYearsNum, yrMin, yrMax = dataCountryYearsNum()
     
     #check params
@@ -33,7 +34,8 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
     #first the upper
     tailSide = "upper"
     #get confidence intervals for the lower or upper end
-    #using the scoresim, get a dictionary for the threshold of significances: dictionary -> windowConf[string(yr,"-",yr+windowSize)] = confalpha
+    #using the scoresim, get a dictionary for the threshold of significances:
+    #dictionary -> windowConf[string(yr,"-",yr+windowSize)] = confalpha
     windowConf = windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alpha)
     
     #Now we must obtain the averages for each country from to country (we need to have the CSV data read)

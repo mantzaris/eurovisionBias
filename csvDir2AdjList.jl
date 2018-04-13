@@ -53,7 +53,7 @@ function windowsDictThresholdsAdjList(windowConf, startYr = 1980, endYr = 1990, 
         #extract the average of the aggregate (adjacency list of country pairs)
         avgAggAdjList = winAggDict["$(yr)-$(yr+windowSize)"]["avgScoreAggregateAdjList"]
         #produce an initialized country pairing adjacency list for the threshold passings
-        thresholdSignificantAdjList = initCountryPairAdjList(startYr,endYr)
+        thresholdSignificantAdjList = initCountryPairAdjList(yr,yr+windowSize)#(startYr,endYr)#!!!!!XXXX
         #now set the pairs of country rows for each significant pair to 1 from 0
         #HERE we do the THRESHOLD COMPARISON
         if(windowConf["tailSide"]=="upper" || windowConf["tailSide"]=="right")
@@ -98,11 +98,11 @@ function windowsDictScoreAdjList(startYr = 1980, endYr = 1990, windowSize = 5)
     yr = startYr
     while( (yr+windowSize) <= endYr )
 	winDict["$(yr)-$(yr+windowSize)"] = Dict()
-	winDict["$(yr)-$(yr+windowSize)"]["countries"] = subsetCountryNamesArray(startYr,endYr)
-        aggAdjList = aggregateAdjList(startYr,endYr)
+	winDict["$(yr)-$(yr+windowSize)"]["countries"] = subsetCountryNamesArray(yr,yr+windowSize)#(startYr,endYr)
+        aggAdjList = aggregateAdjList(yr,yr+windowSize)#(startYr,endYr)
 	winDict["$(yr)-$(yr+windowSize)"]["scoreAggregateAdjList"] = aggAdjList
         #compute the average over the window for the scores
-        avgAggAdjList = initCountryPairAdjList(startYr,endYr)
+        avgAggAdjList = initCountryPairAdjList(yr,yr+windowSize)#(startYr,endYr)
         avgAggAdjList[:,3] = aggAdjList[:,3].*(1/(windowSize+1))
         winDict["$(yr)-$(yr+windowSize)"]["avgScoreAggregateAdjList"] = avgAggAdjList
         
