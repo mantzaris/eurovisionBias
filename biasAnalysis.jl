@@ -19,25 +19,24 @@ using Plots
 #use pyplot()
 pyplot()
 
-function analyzeBiases(wAG)
+function analyzeBiases(wAGupper,wAGlower)
 
     #get the total of the out and inward biases of every country for each time window as a total count
-    countryDictTotalsOutIn = produceSingleWindowsOutIn(wAG)
-    println(countryDictTotalsOutIn)
-    #instead of getting an array, consistently deal with the dict
-    #having a multidimensional array is order dependent and even if we do create it being dependent upon it instead of
-    #dict dump data may not be long term wise as the searching is not always intuitive
-    plotOutIn(countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
-
-    #plotOutInTotal(countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
-
+    countryDictTotalsOutIn = produceSingleWindowsOutIn(wAGupper)    
+    #for each window look at the out/in for the upper lower (pref neg)
+    plotOutIn(countryDictTotalsOutIn,wAGupper["side"],wAGupper["windowSize"],wAGupper["alpha"])
     #the scatter plot for the countries for the full year set overlap/overlay
-    plotOutInAgg(wAG,countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
-
+    plotOutInAgg(wAGupper,countryDictTotalsOutIn,wAGupper["side"],wAGupper["windowSize"],wAGupper["alpha"])
     #the scatter plot from the thresholdSignificantAdjListTOTAL
     #the total in/out for the countries over all the time windows
-    totalTimeInOutScatter(wAG)
-    
+    totalTimeInOutScatter(wAGupper)
+
+    #now for the lower
+    countryDictTotalsOutIn = produceSingleWindowsOutIn(wAGlower)    
+    plotOutIn(countryDictTotalsOutIn,wAGlower["side"],wAGlower["windowSize"],wAGlower["alpha"])
+    plotOutInAgg(wAGlower,countryDictTotalsOutIn,wAGlower["side"],wAGlower["windowSize"],wAGlower["alpha"])
+    totalTimeInOutScatter(wAGlower)
+
 end
 
 function plotOutIn(outInDict,side,windowSize,alpha)
@@ -243,7 +242,25 @@ function getYearsMinMax(wAG)
 end
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #=
+#plotOutInTotal(countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
+
 #look at the total key set and produce an aggregate scatter plot, don't over complicate auto-amigo
 function plotOutInTotal(outInDict,side,windowSize,alpha)
     
