@@ -29,12 +29,13 @@ function analyzeBiases(wAG)
     #dict dump data may not be long term wise as the searching is not always intuitive
     plotOutIn(countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
 
-    plotOutInTotal(countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
+    #plotOutInTotal(countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
 
     #the scatter plot for the countries for the full year set overlap/overlay
     plotOutInAgg(wAG,countryDictTotalsOutIn,wAG["side"],wAG["windowSize"],wAG["alpha"])
 
     #the scatter plot from the thresholdSignificantAdjListTOTAL
+    #the total in/out for the countries over all the time windows
     totalTimeInOutScatter(wAG)
     
 end
@@ -153,6 +154,96 @@ function regionNodeString(countryInput)
 end
 
 
+#have a scatter accumulation of the countries not as a total but OVERLAY
+#each point encountered in the different windows is put independently on a scatter
+function plotOutInAgg(wAG,outInDict,side,windowSize,alpha)
+    ss = 0
+    s1 = []    
+    println(isempty(s1))
+    for winKey in keys(outInDict)#time window keys            
+        winDict = outInDict[winKey]
+        countriesWin = unique(vcat(collect(keys(winDict["out"])),collect(keys(winDict["in"]))))
+        for cW in 1:length(countriesWin)
+            outDeg = 0
+            inDeg = 0 
+            if(haskey(winDict["out"],countriesWin[cW]))
+                outDeg = winDict["out"][countriesWin[cW]]
+            end
+            if(haskey(winDict["in"],countriesWin[cW]))
+                inDeg = winDict["in"][countriesWin[cW]]
+            end       
+            if( ss == 0 )
+                ss += 1
+                s1 =scatter([outDeg],[inDeg],markersize=8,c=:black,leg=false,overwrite_figure=false) 
+            else
+                scatter!([outDeg],[inDeg],markersize=8,c=:black,leg=false) 
+            end
+        end                
+    end
+    yearMin,yearMax = getYearsMinMax(wAG)
+    if(side == "Lower")
+        scatter!(title=string("overlap significant edges neglect $(yearMin)-$(yearMax)"))
+    else
+        scatter!(title=string("overlap significant edges preference $(yearMin)-$(yearMax)"))
+    end
+    scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))
+    #display(s1)
+    tmp = ""
+    side == "Lower" ? tmp="Neglect":tmp="Prefer"
+    filename = string("scatter",tmp,"OverlapWindows",yearMin,"to",yearMax,"win",windowSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
+    #ss = 0#one fig only
+end
+
+
+
+
+
+
+#shows: HOW MANY EDGES IN AN OUT FOR EACH COUNTRY OVER ALL WINDOW PERIODS
+function totalTimeInOutScatter(wAG)
+    alpha = wAG["alpha"]
+    winSize = wAG["windowSize"]
+    side = wAG["side"]
+    totals = wAG["thresholdSignificantAdjListTOTAL"]#n by 3 array
+    
+    cntryAr = unique(totals[:,1])
+
+    s1 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
+    for cInd in 1:length(cntryAr)
+        cntryTmp = cntryAr[cInd]
+        indsOut = (totals[:,1] .== cntryTmp)           
+        indsIn = (totals[:,2] .== cntryTmp)
+        inTotalTmp = sum(totals[indsIn,3])
+        outTotalTmp = sum(totals[indsOut,3])
+        s1 = scatter!([outTotalTmp],[inTotalTmp],markersize=8,c=:black,leg=false) 
+    end
+   
+    yearMin,yearMax = getYearsMinMax(wAG)
+    tmp = ""
+    side == "Lower" ? tmp="Neglect":tmp="Prefer"
+    scatter!(title=string("scatter",tmp,"TotalYearsOutIn",yearMin,"-",yearMax))
+    display(s1)
+    filename = string("scatter",tmp,"TotalYearsOutIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
+    
+end
+
+
+function getYearsMinMax(wAG)
+    keys1 = [(if(kk[1]=='1' || kk[1] == '2'); kk;end)  for kk in keys(wAG)]
+    keys1 = keys1[keys1 .!= nothing]
+    yearsWin = [split(k1,"-") for k1 in keys1]
+    years = vcat(yearsWin)
+    years = [j for i in years for j in i]    
+    years = sort(years)
+    yearMin = parse(Int,years[1])    
+    yearMax = parse(Int,years[end])
+    return yearMin,yearMax
+end
+
+
+#=
 #look at the total key set and produce an aggregate scatter plot, don't over complicate auto-amigo
 function plotOutInTotal(outInDict,side,windowSize,alpha)
     
@@ -197,7 +288,7 @@ function plotOutInTotal(outInDict,side,windowSize,alpha)
         end
     end
     
-    
+
     keys1 = [(if(kk[1]=='1' || kk[1] == '2'); kk;end)  for kk in keys(outInDict)]
     keys1 = keys1[keys1 .!= nothing]
     yearsWin = [split(k1,"-") for k1 in keys1]
@@ -206,8 +297,8 @@ function plotOutInTotal(outInDict,side,windowSize,alpha)
     years = sort(years)
     yearMin = parse(Int,years[1])    
     yearMax = parse(Int,years[end])
-    
-    
+
+
     if(side == "Lower")
         scatter!(title=string("significant Total neglect $yearMin to $yearMax"))
     else
@@ -226,103 +317,4 @@ function plotOutInTotal(outInDict,side,windowSize,alpha)
 
 
 end
-
-
-
-#so we have each window's out/in deg for each country
-#we have the acccmulated for each country over each window
-#simple plot that is maybe not useful, but why not have it, before doing the neglect/pref plots:
-#have a scatter accumulation of the countries not as a total but overlay
-function plotOutInAgg(wAG,outInDict,side,windowSize,alpha)
-    ss = 0
-    s1 = []    
-    println(isempty(s1))
-    for winKey in keys(outInDict)#time window keys
-        
-        println(winKey)
-        winDict = outInDict[winKey]
-        countriesWin = unique(vcat(collect(keys(winDict["out"])),collect(keys(winDict["in"]))))
-        println(countriesWin)
-        for cW in 1:length(countriesWin)
-            outDeg = 0
-            inDeg = 0 
-            if(haskey(winDict["out"],countriesWin[cW]))
-                outDeg = winDict["out"][countriesWin[cW]]
-            end
-            if(haskey(winDict["in"],countriesWin[cW]))
-                inDeg = winDict["in"][countriesWin[cW]]
-            end
-            #println([countriesWin[cW] outDeg inDeg])
-            if( ss == 0 )
-                ss += 1
-                s1 =scatter([outDeg],[inDeg],markersize=8,c=:black,leg=false,overwrite_figure=false) 
-            else
-                scatter!([outDeg],[inDeg],markersize=8,c=:black,leg=false)            
-            end
-        end                
-    end
-
-    yearMin,yearMax = getYearsMinMax(wAG)
-    winKey1 = -1
-    if(side == "Lower")
-        scatter!(title=string("overlap significant edges neglect $(yearMin)-$(yearMax)"))
-    else
-        scatter!(title=string("overlap significant edges preference $(yearMin)-$(yearMax)"))
-    end
-    scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))#scatter!(xguide="x axis" , yguide="y axis")xlabel="outdegree"
-    #display(s1)
-    tmp = ""
-    side == "Lower" ? tmp="Neglect":tmp="Prefer"
-    filename = string("scatter",tmp,"AggregateWin",yearMin,"-",yearMax,"win",windowSize,"alpha",alpha,".png")
-    savefig("./plots/$filename")
-    #ss = 0#one fig only
-end
-#!!!XXX
-
-
-function totalTimeInOutScatter(wAG)
-    #wAG["side"],wAG["windowSize"],wAG["alpha"]
-    alpha = wAG["alpha"]
-    winSize = wAG["windowSize"]
-    side = wAG["side"]
-    totals = wAG["thresholdSignificantAdjListTOTAL"]#n by 3 array
-    
-    countriesTotal = unique(totals[:,1])
-
-    cntryAr = countriesTotal# ["United Kingdom" "Austria" ]
-    s1 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
-    for cInd in 1:length(cntryAr)
-        cntryTmp = cntryAr[cInd]
-        indsOut = (totals[:,1] .== cntryTmp)       
-        totals[indsOut,:]        
-        indsIn = (totals[:,2] .== cntryTmp)
-        totals[indsIn,:]               
-        inTotalTmp = sum(totals[indsIn,3])
-        outTotalTmp = sum(totals[indsOut,3])
-        s1 = scatter!([outTotalTmp],[inTotalTmp],markersize=8,c=:black,leg=false) 
-    end
-   
-
-    yearMin,yearMax = getYearsMinMax(wAG)
-    tmp = ""
-    side == "Lower" ? tmp="Neglect":tmp="Prefer"
-    scatter!(title=string("scatter",tmp,"TotalYearsOutIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png"))
-    display(s1)
-    filename = string("scatter",tmp,"TotalYearsOutIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
-    savefig("./plots/$filename")
-    
-end
-
-
-function getYearsMinMax(wAG)
-    keys1 = [(if(kk[1]=='1' || kk[1] == '2'); kk;end)  for kk in keys(wAG)]
-    keys1 = keys1[keys1 .!= nothing]
-    yearsWin = [split(k1,"-") for k1 in keys1]
-    years = vcat(yearsWin)
-    years = [j for i in years for j in i]    
-    years = sort(years)
-    yearMin = parse(Int,years[1])    
-    yearMax = parse(Int,years[end])
-    return yearMin,yearMax
-end
-
+=#
