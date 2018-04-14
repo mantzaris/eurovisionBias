@@ -37,7 +37,69 @@ function analyzeBiases(wAGupper,wAGlower)
     plotOutInAgg(wAGlower,countryDictTotalsOutIn,wAGlower["side"],wAGlower["windowSize"],wAGlower["alpha"])
     totalTimeInOutScatter(wAGlower)
 
+
+    #now for the upper and lower comparisons
+    totalTimeInOutScatterNegPref(wAGupper,wAGlower)
 end
+
+
+
+#now plot the total neglect out VS the total pref out
+#
+function totalTimeInOutScatterNegPref(wAGupper,wAGlower)
+    alpha = wAGupper["alpha"]
+    winSize = wAGupper["windowSize"]    
+    totalsUpper = wAGupper["thresholdSignificantAdjListTOTAL"]#n by 3 array
+    totalsLower = wAGlower["thresholdSignificantAdjListTOTAL"]#n by 3 array
+    
+    cntryAr = unique(vcat(totalsUpper[:,1],totalsLower[:,1]))
+    println(cntryAr)
+    
+    s1 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out preference", ylabel="out neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
+    
+    for cInd in 1:length(cntryAr)
+        cntryTmp = cntryAr[cInd]
+        indsNeg = (totalsLower[:,1] .== cntryTmp)           
+        indsPref = (totalsUpper[:,1] .== cntryTmp)
+        negTotalTmp = sum(totalsLower[indsNeg,3])
+        prefTotalTmp = sum(totalsUpper[indsPref,3])
+        s1 = scatter!([prefTotalTmp],[negTotalTmp],markersize=8,c=:black,leg=false) 
+    end
+           
+    yearMin,yearMax = getYearsMinMax(wAGupper)#will be identical for both upper/lower windows
+
+    scatter!(title=string("scatterTotalYearsOutPrefNeg",yearMin,"-",yearMax))
+    display(s1)
+    filename = string("scatter","TotalYearsOutPrefNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
+
+
+    #now for inwards
+    s2 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="in preference", ylabel="in neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
+    
+    for cInd in 1:length(cntryAr)
+        cntryTmp = cntryAr[cInd]
+        indsNeg = (totalsLower[:,2] .== cntryTmp)           
+        indsPref = (totalsUpper[:,2] .== cntryTmp)
+        negTotalTmp = sum(totalsLower[indsNeg,3])
+        prefTotalTmp = sum(totalsUpper[indsPref,3])
+        s2 = scatter!([prefTotalTmp],[negTotalTmp],markersize=8,c=:black,leg=false) 
+    end           
+    
+    scatter!(title=string("scatterTotalYearsInPrefNeg",yearMin,"-",yearMax))
+    display(s2)
+    filename = string("scatter","TotalYearsInPrefNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
+    
+    
+end
+
+
+
+
+
+
+
 
 function plotOutIn(outInDict,side,windowSize,alpha)
             
