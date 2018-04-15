@@ -40,6 +40,60 @@ function analyzeBiases(wAGupper,wAGlower)
 
     #now for the upper and lower comparisons
     totalTimeInOutScatterNegPref(wAGupper,wAGlower)
+
+    #the total score received VS how much significant neglect edges inwards counted
+    totalTimeScoreNeglectScatter(wAGupper,wAGlower)
+end
+
+
+
+#now a plot for the total (score VS neglect) for the years in all time windows
+function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
+    alpha = wAGupper["alpha"]
+    winSize = wAGupper["windowSize"]    
+    totalsUpper = wAGupper["thresholdSignificantAdjListTOTAL"]#n by 3 array
+    totalsLower = wAGlower["thresholdSignificantAdjListTOTAL"]#n by 3 array
+    
+    cntryAr = unique(vcat(totalsUpper[:,1],totalsLower[:,1]))
+
+    s1 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="score received", ylabel="in neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
+    
+    for cInd in 1:length(cntryAr)
+        cntryTmp = cntryAr[cInd]
+        indsNeg = (totalsLower[:,2] .== cntryTmp)           
+        
+        negTotalTmp = sum(totalsLower[indsNeg,3])
+        println(cntryTmp)
+        totalScoreTmp = totalCountryScoreReceive(wAGupper,cntryTmp)
+        println(totalScoreTmp)
+        s1 = scatter!([totalScoreTmp],[negTotalTmp],markersize=8,c=:black,leg=false) 
+    end
+
+    yearMin,yearMax = getYearsMinMax(wAGupper)#will be identical for both upper/lower windows
+
+    scatter!(title=string("scatterScoreVSneglectIn",yearMin,"-",yearMax))
+    display(s1)
+    filename = string("scatter","ScoreVSneglectIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
+
+end
+
+#return for a country the total scores/points received (not significance but raw scores)
+function totalCountryScoreReceive(wAGupper,cntryTmp)
+    total = 0
+    for kk in keys(wAGupper)
+        if(kk[1] == '1' || kk[1] == '2')
+            totalsUpper = wAGupper[kk]["scoreAggregateAdjList"]
+            indsScores = (totalsUpper[:,2] .== cntryTmp)
+            println(indsScores)
+            if(count(indsScores) > 0)
+                scoreTmp = sum(totalsUpper[indsScores,3])
+                total += scoreTmp
+            end
+            
+        end
+    end    
+    return total
 end
 
 
@@ -73,7 +127,6 @@ function totalTimeInOutScatterNegPref(wAGupper,wAGlower)
     filename = string("scatter","TotalYearsOutPrefNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
 
-
     #now for inwards
     s2 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="in preference", ylabel="in neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
     
@@ -90,8 +143,7 @@ function totalTimeInOutScatterNegPref(wAGupper,wAGlower)
     display(s2)
     filename = string("scatter","TotalYearsInPrefNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
-    
-    
+        
 end
 
 
