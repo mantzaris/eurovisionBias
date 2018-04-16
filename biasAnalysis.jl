@@ -52,8 +52,7 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
     alpha = wAGupper["alpha"]
     winSize = wAGupper["windowSize"]    
     totalsUpper = wAGupper["thresholdSignificantAdjListTOTAL"]#n by 3 array
-    totalsLower = wAGlower["thresholdSignificantAdjListTOTAL"]#n by 3 array
-    
+    totalsLower = wAGlower["thresholdSignificantAdjListTOTAL"]#n by 3 array    
     cntryAr = unique(vcat(totalsUpper[:,1],totalsLower[:,1]))
 
     s1 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="score received", ylabel="in neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
@@ -70,13 +69,33 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
     end
 
     yearMin,yearMax = getYearsMinMax(wAGupper)#will be identical for both upper/lower windows
-
     scatter!(title=string("scatterScoreVSneglectIn",yearMin,"-",yearMax))
     display(s1)
     filename = string("scatter","ScoreVSneglectIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
 
+
+    s2 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="score received", ylabel="in preference",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
+    
+    for cInd in 1:length(cntryAr)
+        cntryTmp = cntryAr[cInd]
+        indsPref = (totalsUpper[:,2] .== cntryTmp)           
+        
+        prefTotalTmp = sum(totalsUpper[indsPref,3])
+        totalScoreTmp = totalCountryScoreReceive(wAGupper,cntryTmp)
+        s2 = scatter!([totalScoreTmp],[prefTotalTmp],markersize=8,c=:black,leg=false) 
+    end
+
+    scatter!(title=string("scatterScoreVSPreferenceIn",yearMin,"-",yearMax))
+    display(s2)
+    filename = string("scatter","ScoreVSpreferenceIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
+
+
+
 end
+
+
 
 #return for a country the total scores/points received (not significance but raw scores)
 function totalCountryScoreReceive(wAGupper,cntryTmp)
@@ -85,7 +104,7 @@ function totalCountryScoreReceive(wAGupper,cntryTmp)
         if(kk[1] == '1' || kk[1] == '2')
             totalsUpper = wAGupper[kk]["scoreAggregateAdjList"]
             indsScores = (totalsUpper[:,2] .== cntryTmp)
-            println(indsScores)
+            #println(indsScores)
             if(count(indsScores) > 0)
                 scoreTmp = sum(totalsUpper[indsScores,3])
                 total += scoreTmp
