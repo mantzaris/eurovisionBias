@@ -74,7 +74,7 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
     filename = string("scatter","ScoreVSneglectIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
 
-
+    #pref in VS score
     s2 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="score received", ylabel="in preference",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
     
     for cInd in 1:length(cntryAr)
@@ -91,7 +91,64 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
     filename = string("scatter","ScoreVSpreferenceIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
 
+    
+    #(pref in - neg in) VS score
+    s3 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="score received", ylabel="in preference-neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
+    
+    for cInd in 1:length(cntryAr)
+        cntryTmp = cntryAr[cInd]
+        indsPref = (totalsUpper[:,2] .== cntryTmp)           
+        indsNeg = (totalsLower[:,2] .== cntryTmp)           
+        
+        negTotalTmp = sum(totalsLower[indsNeg,3])
+        prefTotalTmp = sum(totalsUpper[indsPref,3])
+        totalScoreTmp = totalCountryScoreReceive(wAGupper,cntryTmp)
+        s3 = scatter!([totalScoreTmp],[prefTotalTmp-negTotalTmp],markersize=8,c=:black,leg=false) 
+    end
 
+    scatter!(title=string("scatterScoreVSPrefMinusNegIn",yearMin,"-",yearMax))
+    display(s3)
+    filename = string("scatter","ScoreVSprefMinusNegIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
+
+
+    #(pref out) VS score
+    s4 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="score received", ylabel="out preference",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
+    
+    for cInd in 1:length(cntryAr)
+        cntryTmp = cntryAr[cInd]
+        indsPref = (totalsUpper[:,1] .== cntryTmp)           
+        indsNeg = (totalsLower[:,2] .== cntryTmp)           
+        
+        negTotalTmp = sum(totalsLower[indsNeg,3])
+        prefTotalTmp = sum(totalsUpper[indsPref,3])
+        totalScoreTmp = totalCountryScoreReceive(wAGupper,cntryTmp)
+        s4 = scatter!([totalScoreTmp],[prefTotalTmp],markersize=8,c=:black,leg=false) 
+    end
+
+    scatter!(title=string("scatterScoreVSPrefOut",yearMin,"-",yearMax))
+    display(s4)
+    filename = string("scatter","ScoreVSprefOut",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
+
+    #(neg out) VS score
+    s5 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="score received", ylabel="out neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
+    
+    for cInd in 1:length(cntryAr)
+        cntryTmp = cntryAr[cInd]
+        indsPref = (totalsUpper[:,1] .== cntryTmp)           
+        indsNeg = (totalsLower[:,1] .== cntryTmp)           
+        
+        negTotalTmp = sum(totalsLower[indsNeg,3])
+        prefTotalTmp = sum(totalsUpper[indsPref,3])
+        totalScoreTmp = totalCountryScoreReceive(wAGupper,cntryTmp)
+        s5 = scatter!([totalScoreTmp],[negTotalTmp],markersize=8,c=:black,leg=false) 
+    end
+
+    scatter!(title=string("scatterScoreVSNeglectOut",yearMin,"-",yearMax))
+    display(s5)
+    filename = string("scatter","ScoreVSNegOut",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
 
 end
 
