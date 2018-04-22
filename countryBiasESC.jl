@@ -118,7 +118,7 @@ end
 #simulate the score distribution for each window span provided
 function scoreSim(startYr,endYr,countryYearsNum)
     AVG_SIMULATION = []
-    iterNum = 2000
+    iterNum = 3000
     for ii = 1:iterNum
         ONE_SIMULATION = []
         for yr = startYr:endYr
