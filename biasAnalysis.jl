@@ -69,7 +69,7 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
     end
 
     yearMin,yearMax = getYearsMinMax(wAGupper)#will be identical for both upper/lower windows
-    scatter!(title=string("scatterScoreVSneglectIn",yearMin,"-",yearMax))
+    scatter!(title=string("Total Neglect In ", yearMin,"-",yearMax,"\n window size=$(winSize)"))
     display(s1)
     filename = string("scatter","ScoreVSneglectIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
@@ -86,7 +86,7 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
         s2 = scatter!([totalScoreTmp],[prefTotalTmp],markersize=8,c=:black,leg=false) 
     end
 
-    scatter!(title=string("scatterScoreVSPreferenceIn",yearMin,"-",yearMax))
+    scatter!(title=string("Total Preference In ",yearMin,"-",yearMax,"\n window size=$(winSize)"))
     display(s2)
     filename = string("scatter","ScoreVSpreferenceIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
@@ -106,7 +106,7 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
         s3 = scatter!([totalScoreTmp],[prefTotalTmp-negTotalTmp],markersize=8,c=:black,leg=false) 
     end
 
-    scatter!(title=string("scatterScoreVSPrefMinusNegIn",yearMin,"-",yearMax))
+    scatter!(title=string("Total Preference-Neglect In ",yearMin,"-",yearMax,"\n window size=$(winSize)"))
     display(s3)
     filename = string("scatter","ScoreVSprefMinusNegIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
@@ -126,7 +126,7 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
         s4 = scatter!([totalScoreTmp],[prefTotalTmp],markersize=8,c=:black,leg=false) 
     end
 
-    scatter!(title=string("scatterScoreVSPrefOut",yearMin,"-",yearMax))
+    scatter!(title=string("Total Preference Out ",yearMin,"-",yearMax,"\n window size= $(winSize)"))
     display(s4)
     filename = string("scatter","ScoreVSprefOut",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
@@ -145,7 +145,7 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
         s5 = scatter!([totalScoreTmp],[negTotalTmp],markersize=8,c=:black,leg=false) 
     end
 
-    scatter!(title=string("scatterScoreVSNeglectOut",yearMin,"-",yearMax))
+   scatter!(title=string("Total Negative Out ",yearMin,"-",yearMax,"\n window size=$(winSize)"))
     display(s5)
     filename = string("scatter","ScoreVSNegOut",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
@@ -198,7 +198,7 @@ function totalTimeInOutScatterNegPref(wAGupper,wAGlower)
            
     yearMin,yearMax = getYearsMinMax(wAGupper)#will be identical for both upper/lower windows
 
-    scatter!(title=string("scatterTotalYearsOutPrefNeg",yearMin,"-",yearMax))
+    scatter!(title=string(yearMin,"-",yearMax,"\n window size=$(winSize)"))
     display(s1)
     filename = string("scatter","TotalYearsOutPrefNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
@@ -215,7 +215,7 @@ function totalTimeInOutScatterNegPref(wAGupper,wAGlower)
         s2 = scatter!([prefTotalTmp],[negTotalTmp],markersize=8,c=:black,leg=false) 
     end           
     
-    scatter!(title=string("scatterTotalYearsInPrefNeg",yearMin,"-",yearMax))
+    scatter!(title=string(yearMin,"-",yearMax,"\n window size= $(winSize)"))
     display(s2)
     filename = string("scatter","TotalYearsInPrefNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
@@ -248,13 +248,13 @@ function plotOutIn(outInDict,side,windowSize,alpha)
             scatter!([outDeg],[inDeg],markersize=8,c=:black,leg=false)                        
         end
         if(side == "Lower")
-            scatter!(title=string("significant edges of neglect $(winKey)"))
+            scatter!(title=string("Neglect $(winKey)"))
         else
-            scatter!(title=string("significant edges of preference $(winKey)"))
+            scatter!(title=string("Preference $(winKey)"))
         end
         scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))
         tmp = ""
-        side == "Lower" ? tmp="Neglect":tmp="Prefer"
+        side == "Lower" ? tmp="Neglect":tmp="Preference"
         filename = string("scatter",tmp,"SingleWin",winKey,"win",windowSize,"alpha",alpha,".png")
         savefig("./plots/$filename")
         ss = 0
@@ -371,14 +371,14 @@ function plotOutInAgg(wAG,outInDict,side,windowSize,alpha)
     end
     yearMin,yearMax = getYearsMinMax(wAG)
     if(side == "Lower")
-        scatter!(title=string("overlap significant edges neglect $(yearMin)-$(yearMax)"))
+        scatter!(title=string("Overlap of Neglect $(yearMin)-$(yearMax) \n window size=$(windowSize)"))
     else
-        scatter!(title=string("overlap significant edges preference $(yearMin)-$(yearMax)"))
+        scatter!(title=string("Overlap of Preference $(yearMin)-$(yearMax) \n window size=$(windowSize)"))
     end
     scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))
     #display(s1)
     tmp = ""
-    side == "Lower" ? tmp="Neglect":tmp="Prefer"
+    side == "Lower" ? tmp="Neglect":tmp="Preference"
     filename = string("scatter",tmp,"OverlapWindows",yearMin,"to",yearMax,"win",windowSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
     #ss = 0#one fig only
@@ -410,8 +410,8 @@ function totalTimeInOutScatter(wAG)
    
     yearMin,yearMax = getYearsMinMax(wAG)
     tmp = ""
-    side == "Lower" ? tmp="Neglect":tmp="Prefer"
-    scatter!(title=string("scatter",tmp,"TotalYearsOutIn",yearMin,"-",yearMax))
+    side == "Lower" ? tmp="Neglect":tmp="Preference"
+    scatter!(title=string("Total ",tmp," ",yearMin,"-",yearMax,"\n window size=$(winSize)"))
     display(s1)
     filename = string("scatter",tmp,"TotalYearsOutIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
