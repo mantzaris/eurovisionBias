@@ -371,9 +371,9 @@ function plotOutInAgg(wAG,outInDict,side,windowSize,alpha)
     end
     yearMin,yearMax = getYearsMinMax(wAG)
     if(side == "Lower")
-        scatter!(title=string("Overlap of Neglect $(yearMin)-$(yearMax) \n window size=$(windowSize)"))
+        scatter!(title=string("Overlapping Neglect $(yearMin)-$(yearMax) \n window size=$(windowSize)"))
     else
-        scatter!(title=string("Overlap of Preference $(yearMin)-$(yearMax) \n window size=$(windowSize)"))
+        scatter!(title=string("Overlapping Preference $(yearMin)-$(yearMax) \n window size=$(windowSize)"))
     end
     scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))
     #display(s1)
