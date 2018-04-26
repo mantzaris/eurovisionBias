@@ -20,6 +20,8 @@ using Plots
 pyplot()
 #StatsBase (for Kendall Tau)
 using StatsBase
+#To get the cdf of the student t distribution
+using Distributions
 
 function analyzeBiases(wAGupper,wAGlower)
 
@@ -480,12 +482,39 @@ end
 
 
 
+#from the spearman rho value get the student t-distribution val
+function spearmanTval(r,n,alpha)
+    tval = r * ( sqrt( (n-2) / (1-(r^2)) ) )
+    println(r)
+    println(tval)
+    return tsignificance(n,tval,alpha)
+end
+
+function tsignificance(degfree,tval,alpha)
+    println(degfree)
+    println(tval)
+    println(alpha)
+    pval = cdf(TDist(degfree),tval)
+    println(pval)
+    if(pval < alpha || pval > (1-alpha))
+        return "significant"
+    else
+        return "not significant"
+    end
+    
+end
 
 
 
+#=
 
-
-
+x=[1,2,3,4,5,6,7,8,9,10];
+y=[1,2,3,4,5,7,10,-11,1,10];
+r=corspearman(x,y)
+tt(r,n) = r*(sqrt((n-2)/(1-r^2)))
+t=tt(r,length(x))
+cdf(TDist(10),8)
+=#
 
 
 
