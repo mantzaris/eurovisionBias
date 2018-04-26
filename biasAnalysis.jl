@@ -18,11 +18,13 @@ other = ["Australia"]
 using Plots
 #use pyplot()
 pyplot()
+#StatsBase (for Kendall Tau)
+using StatsBase
 
 function analyzeBiases(wAGupper,wAGlower)
 
     #get the total of the out and inward biases of every country for each time window as a total count
-    countryDictTotalsOutIn = produceSingleWindowsOutIn(wAGupper)    
+    countryDictTotalsOutIn = produceSingleWindowsOutIn(wAGupper)
     #for each window look at the out/in for the upper lower (pref neg)
     plotOutIn(countryDictTotalsOutIn,wAGupper["side"],wAGupper["windowSize"],wAGupper["alpha"])
     #the scatter plot for the countries for the full year set overlap/overlay
@@ -56,7 +58,8 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
     cntryAr = unique(vcat(totalsUpper[:,1],totalsLower[:,1]))
 
     s1 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="score received", ylabel="in neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
-    
+    xtmp = Int[]
+    ytmp = Int[]
     for cInd in 1:length(cntryAr)
         cntryTmp = cntryAr[cInd]
         indsNeg = (totalsLower[:,2] .== cntryTmp)           
@@ -65,28 +68,35 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
         println(cntryTmp)
         totalScoreTmp = totalCountryScoreReceive(wAGupper,cntryTmp)
         println(totalScoreTmp)
-        s1 = scatter!([totalScoreTmp],[negTotalTmp],markersize=8,c=:black,leg=false) 
+        s1 = scatter!([totalScoreTmp],[negTotalTmp],markersize=8,c=:black,leg=false)
+        push!(xtmp,totalScoreTmp)
+        push!(ytmp,negTotalTmp)
     end
-
+    tau = corkendall(xtmp,ytmp)
+    tau = round(tau,4)
     yearMin,yearMax = getYearsMinMax(wAGupper)#will be identical for both upper/lower windows
-    scatter!(title=string("Total Neglect In ", yearMin,"-",yearMax,"\n window size=$(winSize)"))
+    scatter!(title=string("Total Neglect In ", yearMin,"-",yearMax,"\n window size=$(winSize), \u03C4=$(tau)"))
     display(s1)
     filename = string("scatter","ScoreVSneglectIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
 
     #pref in VS score
     s2 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="score received", ylabel="in preference",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
-    
+    xtmp = Int[]
+    ytmp = Int[]
     for cInd in 1:length(cntryAr)
         cntryTmp = cntryAr[cInd]
         indsPref = (totalsUpper[:,2] .== cntryTmp)           
         
         prefTotalTmp = sum(totalsUpper[indsPref,3])
         totalScoreTmp = totalCountryScoreReceive(wAGupper,cntryTmp)
-        s2 = scatter!([totalScoreTmp],[prefTotalTmp],markersize=8,c=:black,leg=false) 
+        s2 = scatter!([totalScoreTmp],[prefTotalTmp],markersize=8,c=:black,leg=false)
+        push!(xtmp,totalScoreTmp)
+        push!(ytmp,prefTotalTmp)
     end
-
-    scatter!(title=string("Total Preference In ",yearMin,"-",yearMax,"\n window size=$(winSize)"))
+    tau = corkendall(xtmp,ytmp)
+    tau = round(tau,4)
+    scatter!(title=string("Total Preference In ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C4=$(tau)"))
     display(s2)
     filename = string("scatter","ScoreVSpreferenceIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
@@ -94,7 +104,8 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
     
     #(pref in - neg in) VS score
     s3 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="score received", ylabel="in preference-neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
-    
+    xtmp = Int[]
+    ytmp = Int[]
     for cInd in 1:length(cntryAr)
         cntryTmp = cntryAr[cInd]
         indsPref = (totalsUpper[:,2] .== cntryTmp)           
@@ -103,10 +114,13 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
         negTotalTmp = sum(totalsLower[indsNeg,3])
         prefTotalTmp = sum(totalsUpper[indsPref,3])
         totalScoreTmp = totalCountryScoreReceive(wAGupper,cntryTmp)
-        s3 = scatter!([totalScoreTmp],[prefTotalTmp-negTotalTmp],markersize=8,c=:black,leg=false) 
+        s3 = scatter!([totalScoreTmp],[prefTotalTmp-negTotalTmp],markersize=8,c=:black,leg=false)
+        push!(xtmp,totalScoreTmp)
+        push!(ytmp,prefTotalTmp-negTotalTmp)
     end
-
-    scatter!(title=string("Total Preference-Neglect In ",yearMin,"-",yearMax,"\n window size=$(winSize)"))
+    tau = corkendall(xtmp,ytmp)
+    tau = round(tau,4)
+    scatter!(title=string("Total Preference-Neglect In ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C4=$(tau)"))
     display(s3)
     filename = string("scatter","ScoreVSprefMinusNegIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
@@ -114,7 +128,8 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
 
     #(pref out) VS score
     s4 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="score received", ylabel="out preference",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
-    
+    xtmp = Int[]
+    ytmp = Int[]
     for cInd in 1:length(cntryAr)
         cntryTmp = cntryAr[cInd]
         indsPref = (totalsUpper[:,1] .== cntryTmp)           
@@ -123,17 +138,21 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
         negTotalTmp = sum(totalsLower[indsNeg,3])
         prefTotalTmp = sum(totalsUpper[indsPref,3])
         totalScoreTmp = totalCountryScoreReceive(wAGupper,cntryTmp)
-        s4 = scatter!([totalScoreTmp],[prefTotalTmp],markersize=8,c=:black,leg=false) 
+        s4 = scatter!([totalScoreTmp],[prefTotalTmp],markersize=8,c=:black,leg=false)
+        push!(xtmp,totalScoreTmp)
+        push!(ytmp,prefTotalTmp)
     end
-
-    scatter!(title=string("Total Preference Out ",yearMin,"-",yearMax,"\n window size= $(winSize)"))
+    tau = corkendall(xtmp,ytmp)
+    tau = round(tau,4)
+    scatter!(title=string("Total Preference Out ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C4=$(tau)"))
     display(s4)
     filename = string("scatter","ScoreVSprefOut",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
 
     #(neg out) VS score
     s5 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="score received", ylabel="out neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
-    
+    xtmp = Int[]
+    ytmp = Int[]
     for cInd in 1:length(cntryAr)
         cntryTmp = cntryAr[cInd]
         indsPref = (totalsUpper[:,1] .== cntryTmp)           
@@ -142,10 +161,13 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
         negTotalTmp = sum(totalsLower[indsNeg,3])
         prefTotalTmp = sum(totalsUpper[indsPref,3])
         totalScoreTmp = totalCountryScoreReceive(wAGupper,cntryTmp)
-        s5 = scatter!([totalScoreTmp],[negTotalTmp],markersize=8,c=:black,leg=false) 
+        s5 = scatter!([totalScoreTmp],[negTotalTmp],markersize=8,c=:black,leg=false)
+        push!(xtmp,totalScoreTmp)
+        push!(ytmp,negTotalTmp)
     end
-
-   scatter!(title=string("Total Negative Out ",yearMin,"-",yearMax,"\n window size=$(winSize)"))
+tau = corkendall(xtmp,ytmp)
+tau = round(tau,4)
+scatter!(title=string("Total Neglect Out ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C4=$(tau)"))
     display(s5)
     filename = string("scatter","ScoreVSNegOut",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
@@ -186,36 +208,44 @@ function totalTimeInOutScatterNegPref(wAGupper,wAGlower)
     println(cntryAr)
     
     s1 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out preference", ylabel="out neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
-    
+    xtmp = Int[]
+    ytmp = Int[]
     for cInd in 1:length(cntryAr)
         cntryTmp = cntryAr[cInd]
         indsNeg = (totalsLower[:,1] .== cntryTmp)           
         indsPref = (totalsUpper[:,1] .== cntryTmp)
         negTotalTmp = sum(totalsLower[indsNeg,3])
         prefTotalTmp = sum(totalsUpper[indsPref,3])
-        s1 = scatter!([prefTotalTmp],[negTotalTmp],markersize=8,c=:black,leg=false) 
+        s1 = scatter!([prefTotalTmp],[negTotalTmp],markersize=8,c=:black,leg=false)
+        push!(xtmp,prefTotalTmp)
+        push!(ytmp,negTotalTmp)
     end
-           
+    tau = corkendall(xtmp,ytmp)
+    tau = round(tau,4)
     yearMin,yearMax = getYearsMinMax(wAGupper)#will be identical for both upper/lower windows
 
-    scatter!(title=string(yearMin,"-",yearMax,"\n window size=$(winSize)"))
+    scatter!(title=string(yearMin,"-",yearMax,"\n window size=$(winSize), \u03C4=$(tau)"))
     display(s1)
     filename = string("scatter","TotalYearsOutPrefNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
 
     #now for inwards
     s2 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="in preference", ylabel="in neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
-    
+    xtmp = Int[]
+    ytmp = Int[]
     for cInd in 1:length(cntryAr)
         cntryTmp = cntryAr[cInd]
         indsNeg = (totalsLower[:,2] .== cntryTmp)           
         indsPref = (totalsUpper[:,2] .== cntryTmp)
         negTotalTmp = sum(totalsLower[indsNeg,3])
         prefTotalTmp = sum(totalsUpper[indsPref,3])
-        s2 = scatter!([prefTotalTmp],[negTotalTmp],markersize=8,c=:black,leg=false) 
+        s2 = scatter!([prefTotalTmp],[negTotalTmp],markersize=8,c=:black,leg=false)
+        push!(xtmp,prefTotalTmp)
+        push!(ytmp,negTotalTmp)
     end           
-    
-    scatter!(title=string(yearMin,"-",yearMax,"\n window size= $(winSize)"))
+    tau = corkendall(xtmp,ytmp)
+    tau = round(tau,4)
+    scatter!(title=string(yearMin,"-",yearMax,"\n window size=$(winSize), \u03C4=$(tau)"))
     display(s2)
     filename = string("scatter","TotalYearsInPrefNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
@@ -235,7 +265,9 @@ function plotOutIn(outInDict,side,windowSize,alpha)
         
         winDict = outInDict[winKey]
         countriesWin = unique(vcat(collect(keys(winDict["out"])),collect(keys(winDict["in"]))))
-        scatter(markersize=8,c=:black,leg=false,overwrite_figure=false) 
+        scatter(markersize=8,c=:black,leg=false,overwrite_figure=false)
+        xtmp = Int[]
+        ytmp = Int[]
         for cW in 1:length(countriesWin)
             outDeg = 0
             inDeg = 0 
@@ -245,12 +277,16 @@ function plotOutIn(outInDict,side,windowSize,alpha)
             if(haskey(winDict["in"],countriesWin[cW]))
                 inDeg = winDict["in"][countriesWin[cW]]
             end                        
-            scatter!([outDeg],[inDeg],markersize=8,c=:black,leg=false)                        
+            scatter!([outDeg],[inDeg],markersize=8,c=:black,leg=false)
+            push!(xtmp,outDeg)
+            push!(ytmp,inDeg)
         end
+        tau = corkendall(xtmp,ytmp)
+        tau = round(tau,4)
         if(side == "Lower")
-            scatter!(title=string("Neglect $(winKey)"))
+            scatter!(title=string("Neglect $(winKey), \u03C4=$(tau)"))
         else
-            scatter!(title=string("Preference $(winKey)"))
+            scatter!(title=string("Preference $(winKey), \u03C4=$(tau)"))
         end
         scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))
         tmp = ""
@@ -349,9 +385,12 @@ function plotOutInAgg(wAG,outInDict,side,windowSize,alpha)
     ss = 0
     s1 = []    
     println(isempty(s1))
+    xtmp = Int[]
+    ytmp = Int[]
     for winKey in keys(outInDict)#time window keys            
         winDict = outInDict[winKey]
         countriesWin = unique(vcat(collect(keys(winDict["out"])),collect(keys(winDict["in"]))))
+        
         for cW in 1:length(countriesWin)
             outDeg = 0
             inDeg = 0 
@@ -367,13 +406,17 @@ function plotOutInAgg(wAG,outInDict,side,windowSize,alpha)
             else
                 scatter!([outDeg],[inDeg],markersize=8,c=:black,leg=false) 
             end
+            push!(xtmp,outDeg)
+            push!(ytmp,inDeg)
         end                
     end
     yearMin,yearMax = getYearsMinMax(wAG)
+    tau = corkendall(xtmp,ytmp)
+    tau = round(tau,4)
     if(side == "Lower")
-        scatter!(title=string("Overlapping Neglect $(yearMin)-$(yearMax) \n window size=$(windowSize)"))
+        scatter!(title=string("Overlapping Neglect $(yearMin)-$(yearMax) \n window size=$(windowSize), \u03C4=$(tau)"))
     else
-        scatter!(title=string("Overlapping Preference $(yearMin)-$(yearMax) \n window size=$(windowSize)"))
+        scatter!(title=string("Overlapping Preference $(yearMin)-$(yearMax) \n window size=$(windowSize), \u03C4=$(tau)"))
     end
     scatter!(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16))
     #display(s1)
@@ -397,7 +440,8 @@ function totalTimeInOutScatter(wAG)
     totals = wAG["thresholdSignificantAdjListTOTAL"]#n by 3 array
     
     cntryAr = unique(totals[:,1])
-
+    xtmp = Int[]
+    ytmp = Int[]
     s1 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="out degree", ylabel="in degree",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
     for cInd in 1:length(cntryAr)
         cntryTmp = cntryAr[cInd]
@@ -405,13 +449,16 @@ function totalTimeInOutScatter(wAG)
         indsIn = (totals[:,2] .== cntryTmp)
         inTotalTmp = sum(totals[indsIn,3])
         outTotalTmp = sum(totals[indsOut,3])
-        s1 = scatter!([outTotalTmp],[inTotalTmp],markersize=8,c=:black,leg=false) 
+        s1 = scatter!([outTotalTmp],[inTotalTmp],markersize=8,c=:black,leg=false)
+        push!(xtmp,outTotalTmp)
+        push!(ytmp,inTotalTmp)
     end
-   
+    tau = corkendall(xtmp,ytmp)
+    tau = round(tau,4)
     yearMin,yearMax = getYearsMinMax(wAG)
     tmp = ""
     side == "Lower" ? tmp="Neglect":tmp="Preference"
-    scatter!(title=string("Total ",tmp," ",yearMin,"-",yearMax,"\n window size=$(winSize)"))
+    scatter!(title=string("Total ",tmp," ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C4=$(tau)"))
     display(s1)
     filename = string("scatter",tmp,"TotalYearsOutIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
