@@ -485,23 +485,19 @@ end
 #from the spearman rho value get the student t-distribution val
 function spearmanTval(r,n,alpha)
     tval = r * ( sqrt( (n-2) / (1-(r^2)) ) )
-    println(r)
-    println(tval)
+    #println(r);println(tval)
     return tsignificance(n,tval,alpha)
 end
 
 function tsignificance(degfree,tval,alpha)
-    println(degfree)
-    println(tval)
-    println(alpha)
+    #println(degfree);println(tval);println(alpha);
     pval = cdf(TDist(degfree),tval)
-    println(pval)
+    #println(pval)
     if(pval < alpha || pval > (1-alpha))
         return "significant"
     else
         return "not significant"
     end
-    
 end
 
 
