@@ -23,6 +23,11 @@ using StatsBase
 #To get the cdf of the student t distribution
 using Distributions
 using RCall
+using LaTeXStrings
+#julia> ll=LaTeXString("an equation:  1 + \\alpha^2 ")
+#julia> plot([1,2,3,4],[1,2,3,4],title=ll)
+
+
 
 
 function analyzeBiases(wAGupper,wAGlower)
@@ -64,7 +69,7 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
     totalsLower = wAGlower["thresholdSignificantAdjListTOTAL"]#n by 3 array    
     cntryAr = unique(vcat(totalsUpper[:,1],totalsLower[:,1]))
 
-    s1 = scatter(titlefontsize=18,yguidefontsize=18,xguidefontsize=18,xlabel="score received", ylabel="in neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
+    s1 = scatter(titlefontsize=16,yguidefontsize=18,xguidefontsize=18,xlabel="score received", ylabel="in neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
     xtmp = Int[]
     ytmp = Int[]
     for cInd in 1:length(cntryAr)
@@ -79,14 +84,14 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
         push!(xtmp,totalScoreTmp)
         push!(ytmp,negTotalTmp)
     end
-    tau = corkendall(xtmp,ytmp)
+    tau = rkendallVal(xtmp,ytmp)#corkendall(xtmp,ytmp)
     tau = round(tau,3)
     testTau = rkendallSig(xtmp,ytmp,alpha)#
-    rho = corspearman(xtmp,ytmp)
+    rho = rspearmanVal(xtmp,ytmp)#corspearman(xtmp,ytmp)
     rho = round(rho,3)
     testRho = rspearmanSig(xtmp,ytmp,alpha)#spearmanTval(rho,length(xtmp),alpha)
     yearMin,yearMax = getYearsMinMax(wAGupper)#will be identical for both upper/lower windows
-    scatter!(title=string("Total Neglect In ", yearMin,"-",yearMax,"\n window size=$(winSize) \n \u03C4=$(tau) ($(testTau)) \n \u03C1=$(rho) ($(testRho))"))
+    scatter!(title=string("Total Neglect In ", yearMin,"-",yearMax,": window size=$(winSize) \n \u03C4=$(tau) ($(testTau)) \u03C1=$(rho) ($(testRho))"))
     #display(s1)
     filename = string("scatter","ScoreVSneglectIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
@@ -105,10 +110,10 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
         push!(xtmp,totalScoreTmp)
         push!(ytmp,prefTotalTmp)
     end
-    tau = corkendall(xtmp,ytmp)
+    tau = rkendallVal(xtmp,ytmp)#corkendall(xtmp,ytmp)
     tau = round(tau,3)
     testTau = rkendallSig(xtmp,ytmp,alpha)#
-    rho = corspearman(xtmp,ytmp)
+    rho = rspearmanVal(xtmp,ytmp)#corspearman(xtmp,ytmp)
     rho = round(rho,3)
     testRho = rspearmanSig(xtmp,ytmp,alpha)#spearmanTval(rho,length(xtmp),alpha)
     scatter!(title=string("Total Preference In ",yearMin,"-",yearMax,"\n window size=$(winSize) \n \u03C4=$(tau) ($(testTau)) \n \u03C1=$(rho)  ($(testRho))"))
@@ -133,10 +138,10 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
         push!(xtmp,totalScoreTmp)
         push!(ytmp,prefTotalTmp-negTotalTmp)
     end
-    tau = corkendall(xtmp,ytmp)
+    tau = rkendallVal(xtmp,ytmp)#corkendall(xtmp,ytmp)
     tau = round(tau,3)
     testTau = rkendallSig(xtmp,ytmp,alpha)#
-    rho = corspearman(xtmp,ytmp)
+    rho = rspearmanVal(xtmp,ytmp)#corspearman(xtmp,ytmp)
     rho = round(rho,3)
     testRho = rspearmanSig(xtmp,ytmp,alpha)#spearmanTval(rho,length(xtmp),alpha)
     scatter!(title=string("Total Preference-Neglect In ",yearMin,"-",yearMax,"\n window size=$(winSize) \n \u03C4=$(tau) ($(testTau)) \n \u03C1=$(rho) ($(testRho))"))
@@ -161,10 +166,10 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
         push!(xtmp,totalScoreTmp)
         push!(ytmp,prefTotalTmp)
     end
-    tau = corkendall(xtmp,ytmp)
+    tau = rkendallVal(xtmp,ytmp)#corkendall(xtmp,ytmp)
     tau = round(tau,3)
     testTau = rkendallSig(xtmp,ytmp,alpha)#round(tau,3)
-    rho = corspearman(xtmp,ytmp)
+    rho = rspearmanVal(xtmp,ytmp)#corspearman(xtmp,ytmp)
     rho = round(rho,3)
     testRho = rspearmanSig(xtmp,ytmp,alpha)#spearmanTval(rho,length(xtmp),alpha)
     scatter!(title=string("Total Preference Out ",yearMin,"-",yearMax,"\n window size=$(winSize) \n \u03C4=$(tau) ($(testTau)) \n \u03C1=$(rho) ($(testRho))"))
@@ -188,7 +193,7 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
         push!(xtmp,totalScoreTmp)
         push!(ytmp,negTotalTmp)
     end
-tau = corkendall(xtmp,ytmp)
+tau = rkendallVal(xtmp,ytmp)#corkendall(xtmp,ytmp)
 tau = round(tau,3)
 testTau = rkendallSig(xtmp,ytmp,alpha)#round(tau,3)
 rho = corspearman(xtmp,ytmp)
@@ -247,10 +252,10 @@ function totalTimeInOutScatterNegPref(wAGupper,wAGlower)
         push!(xtmp,prefTotalTmp)
         push!(ytmp,negTotalTmp)
     end
-    tau = corkendall(xtmp,ytmp)
+    tau = rkendallVal(xtmp,ytmp)#corkendall(xtmp,ytmp)
     tau = round(tau,3)
     testTau = rkendallSig(xtmp,ytmp,alpha)#round(tau,3)
-    rho = corspearman(xtmp,ytmp)
+    rho = rspearmanVal(xtmp,ytmp)#corspearman(xtmp,ytmp)
     rho = round(rho,3)
     testRho = rspearmanSig(xtmp,ytmp,alpha)#spearmanTval(rho,length(xtmp),alpha)
     yearMin,yearMax = getYearsMinMax(wAGupper)#will be identical for both upper/lower windows
@@ -274,10 +279,10 @@ function totalTimeInOutScatterNegPref(wAGupper,wAGlower)
         push!(xtmp,prefTotalTmp)
         push!(ytmp,negTotalTmp)
     end           
-    tau = corkendall(xtmp,ytmp)
+    tau = rkendallVal(xtmp,ytmp)#corkendall(xtmp,ytmp)
     tau = round(tau,3)
     testTau = rkendallSig(xtmp,ytmp,alpha)#rspearmanSig#round(tau,3)
-    rho = corspearman(xtmp,ytmp)
+    rho = rspearmanVal(xtmp,ytmp)#corspearman(xtmp,ytmp)
     rho = round(rho,3)
     testRho = rspearmanSig(xtmp,ytmp,alpha)#spearmanTval(rho,length(xtmp),alpha)
     scatter!(title=string("Total In ",yearMin,"-",yearMax,"\n window size=$(winSize) \n \u03C4=$(tau) ($(testTau)) \n \u03C1=$(rho) ($(testRho))"))
@@ -316,10 +321,10 @@ function plotOutIn(outInDict,side,windowSize,alpha)
             push!(xtmp,outDeg)
             push!(ytmp,inDeg)
         end
-        tau = corkendall(xtmp,ytmp)
+        tau = rkendallVal(xtmp,ytmp)#corkendall(xtmp,ytmp)
         tau = round(tau,3)
         testTau = rkendallSig(xtmp,ytmp,alpha)#rspearmanSig#round(tau,3)
-        rho = corspearman(xtmp,ytmp)
+        rho = rspearmanVal(xtmp,ytmp)#corspearman(xtmp,ytmp)
         rho = round(rho,3)
         testRho = rspearmanSig(xtmp,ytmp,alpha)#spearmanTval(rho,length(xtmp),alpha)
         if(side == "Lower")
@@ -450,10 +455,10 @@ function plotOutInAgg(wAG,outInDict,side,windowSize,alpha)
         end                
     end
     yearMin,yearMax = getYearsMinMax(wAG)
-    tau = corkendall(xtmp,ytmp)
+    tau = rkendallVal(xtmp,ytmp)#corkendall(xtmp,ytmp)
     tau = round(tau,3)
     testTau = rkendallSig(xtmp,ytmp,alpha)#rspearmanSig#round(tau,3)
-    rho = corspearman(xtmp,ytmp)
+    rho = rspearmanVal(xtmp,ytmp)#corspearman(xtmp,ytmp)
     rho = round(rho,3)
     testRho = rspearmanSig(xtmp,ytmp,alpha)#spearmanTval(rho,length(xtmp),alpha)
     if(side == "Lower")
@@ -496,10 +501,10 @@ function totalTimeInOutScatter(wAG)
         push!(xtmp,outTotalTmp)
         push!(ytmp,inTotalTmp)
     end
-    tau = corkendall(xtmp,ytmp)
+    tau = rkendallVal(xtmp,ytmp)#corkendall(xtmp,ytmp)
     tau = round(tau,3)
     testTau = rkendallSig(xtmp,ytmp,alpha)#rspearmanSig#round(tau,3)
-    rho = corspearman(xtmp,ytmp)
+    rho = rspearmanVal(xtmp,ytmp)#corspearman(xtmp,ytmp)
     rho = round(rho,3)
     testRho = rspearmanSig(xtmp,ytmp,alpha)#spearmanTval(rho,length(xtmp),alpha)
     yearMin,yearMax = getYearsMinMax(wAG)
@@ -526,9 +531,25 @@ function getYearsMinMax(wAG)
 end
 
 
-#returns whether the p value for the spearman Rho
+
+
+
+
+#what is the spearman rho value found from R
+function rkendallVal(xx,yy)
+    
+    return R"cor.test($xx,$yy,method='kendall', exact=FALSE)$estimate"[1]
+end
+
+#what is the spearman rho value found from R
+function rspearmanVal(xx,yy)
+    
+    return R"cor.test($xx,$yy,method='spearman', exact=FALSE)$estimate"[1]
+end
+
+#returns whether the p value for the spearman Rho is significant
 function rspearmanSig(xx,yy,alpha)
-    pval = R"cor.test($xx,$yy,method='spearman')$p.value"[1]
+    pval = R"cor.test($xx,$yy,method='spearman', exact=FALSE)$p.value"[1]
     println(pval)
     if(pval < (alpha/2))
         return "significant"
@@ -538,9 +559,9 @@ function rspearmanSig(xx,yy,alpha)
 end
 
 
-#returns whether the p value for the spearman Rho
+#returns whether the p value for the kendall tau is significant
 function rkendallSig(xx,yy,alpha)
-    pval = R"cor.test($xx,$yy,method='kendall')$p.value"[1]
+    pval = R"cor.test($xx,$yy,method='kendall', exact=FALSE)$p.value"[1]
     println(pval)
     if(pval < (alpha/2))
         return "significant"
