@@ -239,7 +239,7 @@ function totalTimeInOutScatterNegPref(wAGupper,wAGlower)
     cntryAr = unique(vcat(totalsUpper[:,1],totalsLower[:,1]))
     println(cntryAr)
     
-    s1 = scatter(titlefontsize=TITLE_FONT_SIZE,yguidefontsize=18,xguidefontsize=18,xlabel="out preference", ylabel="out neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
+    s1 = scatter(titlefontsize=TITLE_FONT_SIZE,yguidefontsize=18,xguidefontsize=18,xlabel="total out preference", ylabel="total out neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
     xtmp = Int[]
     ytmp = Int[]
     for cInd in 1:length(cntryAr)
@@ -260,7 +260,7 @@ function totalTimeInOutScatterNegPref(wAGupper,wAGlower)
     testRho = rspearmanSig(xtmp,ytmp,alpha)#spearmanTval(rho,length(xtmp),alpha)
     yearMin,yearMax = getYearsMinMax(wAGupper)#will be identical for both upper/lower windows
 
-    scatter!(title=string("Total Out ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C1=$(rho)($(testRho))"))# \u03C4=$(tau)($(testTau))
+    scatter!(title=string("Preference VS Neglect ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C1=$(rho)($(testRho))"))# \u03C4=$(tau)($(testTau))
     #display(s1)
     filename = string("scatter","TotalYearsOutPrefNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
@@ -289,10 +289,70 @@ function totalTimeInOutScatterNegPref(wAGupper,wAGlower)
     #display(s2)
     filename = string("scatter","TotalYearsInPrefNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
+
+
+
+
+    #now plot the total neglect In VS the total pref OUT
+    s3 = scatter(titlefontsize=TITLE_FONT_SIZE,yguidefontsize=18,xguidefontsize=18,xlabel="total out preference", ylabel="total in neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
+    xtmp = Int[]
+    ytmp = Int[]
+    for cInd in 1:length(cntryAr)
+        cntryTmp = cntryAr[cInd]
+        indsNeg = (totalsLower[:,2] .== cntryTmp)           
+        indsPref = (totalsUpper[:,1] .== cntryTmp)
+        negTotalTmp = sum(totalsLower[indsNeg,3])
+        prefTotalTmp = sum(totalsUpper[indsPref,3])
+        s3 = scatter!([prefTotalTmp],[negTotalTmp],markersize=8,c=:black,leg=false)
+        push!(xtmp,prefTotalTmp)
+        push!(ytmp,negTotalTmp)
+    end
+    tau = rkendallVal(xtmp,ytmp)#corkendall(xtmp,ytmp)
+    tau = round(tau,2)
+    testTau = rkendallSig(xtmp,ytmp,alpha)#round(tau,3)
+    rho = rspearmanVal(xtmp,ytmp)#corspearman(xtmp,ytmp)
+    rho = round(rho,2)
+    testRho = rspearmanSig(xtmp,ytmp,alpha)#spearmanTval(rho,length(xtmp),alpha)
+    yearMin,yearMax = getYearsMinMax(wAGupper)#will be identical for both upper/lower windows
+
+    scatter!(title=string("Preference VS Neglect ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C1=$(rho)($(testRho))"))# \u03C4=$(tau)($(testTau))
+    #display(s3)
+    filename = string("scatter","TotalYearsOutPrefInNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
+
+
+
+
+    
+    s4 = scatter(titlefontsize=TITLE_FONT_SIZE,yguidefontsize=18,xguidefontsize=18,xlabel="total in preference", ylabel="total out neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
+    xtmp = Int[]
+    ytmp = Int[]
+    for cInd in 1:length(cntryAr)
+        cntryTmp = cntryAr[cInd]
+        indsNeg = (totalsLower[:,1] .== cntryTmp)           
+        indsPref = (totalsUpper[:,2] .== cntryTmp)
+        negTotalTmp = sum(totalsLower[indsNeg,3])
+        prefTotalTmp = sum(totalsUpper[indsPref,3])
+        s4 = scatter!([prefTotalTmp],[negTotalTmp],markersize=8,c=:black,leg=false)
+        push!(xtmp,prefTotalTmp)
+        push!(ytmp,negTotalTmp)
+    end
+tau = rkendallVal(xtmp,ytmp)#corkendall(xtmp,ytmp)
+tau = round(tau,2)
+testTau = rkendallSig(xtmp,ytmp,alpha)#round(tau,3)
+rho = rspearmanVal(xtmp,ytmp)#corspearman(xtmp,ytmp)
+rho = round(rho,2)
+testRho = rspearmanSig(xtmp,ytmp,alpha)#spearmanTval(rho,length(xtmp),alpha)
+yearMin,yearMax = getYearsMinMax(wAGupper)#will be identical for both upper/lower windows
+
+scatter!(title=string("Preference VS Neglect ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C1=$(rho)($(testRho))"))# \u03C4=$(tau)($(testTau))
+#display(s4)
+filename = string("scatter","TotalYearsInPrefOutNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+savefig("./plots/$filename")
+
+    
         
 end
-
-
 
 
 
