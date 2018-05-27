@@ -14,8 +14,8 @@ other = ["Australia"]
 #thresholdSignificantAdjListTOTAL
 #Window spans-> countries | thresholdSigAdjList | avgScoreAggregateAdjList | scoreAggregateAdjList
 #make a function to start the graph
-function graphAvoid(wAGLOW)
-    
+function graphAvoid(wAGLOW,wAGHIGH)
+    #FIRST LOWER
     #produce the graph images from the one way avoid biases
     produceOneWayGraphs(wAGLOW)
     #produce the graph images from the total one way avoids
@@ -24,6 +24,11 @@ function graphAvoid(wAGLOW)
     produceMutualTwoWayGraphs(wAGLOW)
     #produce the total mutual avoid count graph
     produceTotalMutualTwoWayGraphs(wAGLOW)
+    #NOW HIGH / UPPER
+    produceOneWayGraphs(wAGHIGH)
+    produceTotalOneWayGraphs(wAGHIGH)
+    produceMutualTwoWayGraphs(wAGHIGH)
+    produceTotalMutualTwoWayGraphs(wAGHIGH)
 end
 
 
@@ -544,6 +549,7 @@ function countryMutualEdgesTotal(wAGLOW)
         cntry1 = mutualAdjList[ii,1]
         cntry2 = mutualAdjList[ii,2]
         weight = mutualAdjList[ii,5]
+        weight = weight + 1.5*(weight-1)
         if(side == "Lower")
             edges = string(edges,cntry1,"->",cntry2," [dir=both color=red penwidth=$(weight)];")
         else
