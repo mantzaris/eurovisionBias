@@ -202,6 +202,43 @@ end
 
 
 
+#in this function we will pass the adjMatScore structure (mat)
+#in each year, find the average score for all the countries per year
+#find countries which are not in each year
+#add countries and the average score for each year
+function missingCountryScoreInsert(adjMatScore)
+    adjMatScoreTmp = adjMatScore#what is returned
+    countriesUnique = unique(adjMatScore[:,1])
+    yearsUnique = unique(adjMatScore[:,3])
+    for yy in yearsUnique
+        #if(yy==1980)
+        rowsYear = (adjMatScore[:,3] .== yy)
+        muTmp = mean(adjMatScore[rowsYear,4])
+        println(muTmp)
+        #end
+        yrCountries = unique(adjMatScore[rowsYear,1])
+        #println(yrCountries)
+        
+        for cc in countriesUnique
+            if( !(cc in yrCountries) )
+                println("$(cc)--")
+                
+                for cTmp in countriesUnique
+                    println([cc cTmp yy muTmp])
+                    println([cTmp cc yy muTmp])
+                    adjMatScoreTmp = vcat(adjMatScoreTmp,[cc cTmp yy muTmp])
+                    adjMatScoreTmp = vcat(adjMatScoreTmp,[cTmp cc yy muTmp])
+                end
+            end
+        end
+        
+    end
+    return adjMatScoreTmp
+    
+end
+
+
+
 
 
 #look at the directory and load every .csv file, then produce a final matrix which is the countryFrom|countryTo|year|score
