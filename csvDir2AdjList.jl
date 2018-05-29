@@ -196,7 +196,8 @@ function yearsScoreAdjList(startYr = 1980, endYr = 1990)
         end
        
     end
-    return adjMatScore   
+    adjMatScoreNoShows = missingCountryScoreInsert(adjMatScore)
+    return adjMatScoreNoShows   
 end
 
 
@@ -211,21 +212,26 @@ function missingCountryScoreInsert(adjMatScore)
     countriesUnique = unique(adjMatScore[:,1])
     yearsUnique = unique(adjMatScore[:,3])
     for yy in yearsUnique
-        #if(yy==1980)
-        rowsYear = (adjMatScore[:,3] .== yy)
-        muTmp = mean(adjMatScore[rowsYear,4])
-        println(muTmp)
-        #end
+
+        rowsYear = (adjMatScore[:,3] .== yy)        
         yrCountries = unique(adjMatScore[rowsYear,1])
         #println(yrCountries)
-        
+        ind = 0
         for cc in countriesUnique
             if( !(cc in yrCountries) )
-                println("$(cc)--")
+                ind+=1
+            end
+        end
+        sumTmp = sum(adjMatScore[rowsYear,4])        
+        muTmp = sumTmp/(length(adjMatScore[rowsYear,4])+ind)
+        println(muTmp)
+        for cc in countriesUnique
+            if( !(cc in yrCountries) )
+                println("$(cc)--$(yy)")
                 
                 for cTmp in countriesUnique
-                    println([cc cTmp yy muTmp])
-                    println([cTmp cc yy muTmp])
+                    #println([cc cTmp yy muTmp])
+                    #println([cTmp cc yy muTmp])
                     adjMatScoreTmp = vcat(adjMatScoreTmp,[cc cTmp yy muTmp])
                     adjMatScoreTmp = vcat(adjMatScoreTmp,[cTmp cc yy muTmp])
                 end
