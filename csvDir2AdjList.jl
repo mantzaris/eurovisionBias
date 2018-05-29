@@ -223,7 +223,7 @@ function missingCountryScoreInsert(adjMatScore)
             end
         end
         sumTmp = sum(adjMatScore[rowsYear,4])        
-        muTmp = sumTmp/(length(adjMatScore[rowsYear,4])+ind)
+        muTmp = round(sumTmp/(length(adjMatScore[rowsYear,4])+ind),4)
         println(muTmp)
         for cc in countriesUnique
             if( !(cc in yrCountries) )
