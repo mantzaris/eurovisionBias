@@ -197,11 +197,12 @@ end
 
 
 
-#give the .dot file to graphviz and make the png file
+#give the .dot file to graphviz and make the png file AND NOW PDF as well
 function writeGraphViz(filename, networkInit)
     fileNameDot = string(filename,".dot")
     
     filePNG = string(filename,".png")
+    filePDF = string(filename,".pdf")
     
     writedlm(string(fileNameDot), [networkInit])
     
@@ -209,6 +210,11 @@ function writeGraphViz(filename, networkInit)
     #println(filePNGrel)
     run(`dot $fileNameDot -Tpng -o $filePNG`)
     run(`mv $filePNG ./graphs/`)
+    #run(`mv $fileNameDot ./graphs/`)
+
+    run(`dot $fileNameDot -Tpdf -o $filePDF`)
+    run(`mv $filePDF ./graphs/`)
+    #move after use
     run(`mv $fileNameDot ./graphs/`)
 end
 

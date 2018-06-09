@@ -95,6 +95,8 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
     #display(s1)
     filename = string("scatter","ScoreVSneglectIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
+    filename = string("scatter","ScoreVSneglectIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".pdf")
+    savefig("./plots/$filename")
 
     #pref in VS score
     s2 = scatter(titlefontsize=TITLE_FONT_SIZE,yguidefontsize=18,xguidefontsize=18,xlabel="total score received", ylabel="total in preference",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
@@ -119,6 +121,8 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
     scatter!(title=string("Received Preference VS Score ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C1=$(rho)($(testRho))"))# \u03C4=$(tau)($(testTau))
     #display(s2)
     filename = string("scatter","ScoreVSpreferenceIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
+        filename = string("scatter","ScoreVSpreferenceIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".pdf")
     savefig("./plots/$filename")
 
     
@@ -148,6 +152,8 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
     #display(s3)
     filename = string("scatter","ScoreVSprefMinusNegIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
+    filename = string("scatter","ScoreVSprefMinusNegIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".pdf")
+    savefig("./plots/$filename")
 
 
     #(pref out) VS score
@@ -175,6 +181,8 @@ function totalTimeScoreNeglectScatter(wAGupper,wAGlower)
     scatter!(title=string("Out Preference VS Score ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C1=$(rho)($(testRho))"))# \u03C4=$(tau)($(testTau))
     #display(s4)
     filename = string("scatter","ScoreVSprefOut",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+savefig("./plots/$filename")
+    filename = string("scatter","ScoreVSprefOut",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".pdf")
     savefig("./plots/$filename")
 
     #(neg out) VS score
@@ -202,6 +210,8 @@ testRho = rspearmanSig(xtmp,ytmp,alpha)#spearmanTval(rho,length(xtmp),alpha)
 scatter!(title=string("Out Neglect VS Score ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C1=$(rho)($(testRho))"))# \u03C4=$(tau)($(testTau))
     #display(s5)
     filename = string("scatter","ScoreVSNegOut",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+savefig("./plots/$filename")
+    filename = string("scatter","ScoreVSNegOut",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".pdf")
     savefig("./plots/$filename")
 
 end
@@ -264,6 +274,8 @@ function totalTimeInOutScatterNegPref(wAGupper,wAGlower)
     #display(s1)
     filename = string("scatter","TotalYearsOutPrefNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
+        filename = string("scatter","TotalYearsOutPrefNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".pdf")
+    savefig("./plots/$filename")
 
     #now for inwards
     s2 = scatter(titlefontsize=TITLE_FONT_SIZE,yguidefontsize=18,xguidefontsize=18,xlabel="total in preference", ylabel="total in neglect",xlabfont=font(20), xtickfont = font(14), ytickfont = font(16),overwrite_figure=false)
@@ -288,6 +300,8 @@ function totalTimeInOutScatterNegPref(wAGupper,wAGlower)
     scatter!(title=string("Preference VS Neglect ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C1=$(rho)($(testRho))"))# \u03C4=$(tau)($(testTau))
     #display(s2)
     filename = string("scatter","TotalYearsInPrefNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
+        filename = string("scatter","TotalYearsInPrefNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".pdf")
     savefig("./plots/$filename")
 
 
@@ -319,6 +333,8 @@ function totalTimeInOutScatterNegPref(wAGupper,wAGlower)
     #display(s3)
     filename = string("scatter","TotalYearsOutPrefInNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
+        filename = string("scatter","TotalYearsOutPrefInNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".pdf")
+    savefig("./plots/$filename")
 
 
 
@@ -348,6 +364,8 @@ yearMin,yearMax = getYearsMinMax(wAGupper)#will be identical for both upper/lowe
 scatter!(title=string("Preference VS Neglect ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C1=$(rho)($(testRho))"))# \u03C4=$(tau)($(testTau))
 #display(s4)
 filename = string("scatter","TotalYearsInPrefOutNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+savefig("./plots/$filename")
+filename = string("scatter","TotalYearsInPrefOutNeg",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".pdf")
 savefig("./plots/$filename")
 
     
@@ -396,6 +414,8 @@ function plotOutIn(outInDict,side,windowSize,alpha)
         tmp = ""
         side == "Lower" ? tmp="Neglect":tmp="Preference"
         filename = string("scatter",tmp,"SingleWin",winKey,"win",windowSize,"alpha",alpha,".png")
+        savefig("./plots/$filename")
+        filename = string("scatter",tmp,"SingleWin",winKey,"win",windowSize,"alpha",alpha,".pdf")
         savefig("./plots/$filename")
         ss = 0
     end                    
@@ -532,6 +552,8 @@ function plotOutInAgg(wAG,outInDict,side,windowSize,alpha)
     side == "Lower" ? tmp="Neglect":tmp="Preference"
     filename = string("scatter",tmp,"OverlapWindows",yearMin,"to",yearMax,"win",windowSize,"alpha",alpha,".png")
     savefig("./plots/$filename")
+        filename = string("scatter",tmp,"OverlapWindows",yearMin,"to",yearMax,"win",windowSize,"alpha",alpha,".pdf")
+    savefig("./plots/$filename")
     #ss = 0#one fig only
 end
 
@@ -573,6 +595,8 @@ function totalTimeInOutScatter(wAG)
     scatter!(title=string(tmp," ",yearMin,"-",yearMax,"\n window size=$(winSize), \u03C1=$(rho)($(testRho))"))# \u03C4=$(tau)($(testTau))
     #display(s1)
     filename = string("scatter",tmp,"TotalYearsOutIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".png")
+    savefig("./plots/$filename")
+    filename = string("scatter",tmp,"TotalYearsOutIn",yearMin,"-",yearMax,"win",winSize,"alpha",alpha,".pdf")
     savefig("./plots/$filename")
     
 end
