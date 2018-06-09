@@ -13,7 +13,8 @@ using GraphViz
 
 #csvDir2AdjList.jl is the file with functions to call upon the real data to get the aggregates
 include("csvDir2AdjList.jl")
-
+#include("biasGraphView.jl")
+#include("biasAnalysis.jl")
 
 #>>MAIN<<
 function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
@@ -26,7 +27,7 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
     #check params
     paramCheck(startYr, endYr, windowSize, yrMin, yrMax)
 
-    #simulate scores to create a distribution
+    #simulate scores to create a distribution1
     #return the low2high score accumulation for each interval in a dictionary: windowDist[string(yr,"-",yr+windowSize)]
     windowDist = scoreSimDist(startYr, endYr, windowSize, countryYearsNum)
     #println(windowDist)
@@ -37,14 +38,16 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
     #using the scoresim, get a dictionary for the threshold of significances:
     #dictionary -> windowConf[string(yr,"-",yr+windowSize)] = confalpha
     windowConf = windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alpha)
-    
+    println("finished windowConf")
     #Now we must obtain the averages for each country from to country (we need to have the CSV data read)
     #return the dictionary of the time windows and the aggregate adjacency list of scores, country names, average scores aggregates for each window, and the thresholds of when the average surpasses the alpha value for significance. keys: "countries" "thresholdSigAdjList" "avgScoreAggregateAdjList" "scoreAggregateAdjList"
     winAggDictUpper = windowsDictThresholdsAdjList(windowConf, startYr, endYr, windowSize)
-
+    println("finished Agg Dict Upper")
     #To reduce computations later on, we now add to the dictionary a key to the total threshold surpassings as a count for the set of windows (1 per window significance) and get the total country name list for the full time period each window covers
     winAggDictUpper = dictTotalThresholdsAdjListWindowCount(winAggDictUpper,startYr,endYr,windowSize)
 
+    println("finished upper")
+    
     #same as above but now for the lower end of the distribution
     tailSide = "lower"
     windowConfLower = windowConfValues(startYr, endYr, windowSize, windowDist, tailSide, alpha)
@@ -57,7 +60,15 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
     winAggDictLower["windowSize"] = windowSize
     winAggDictUpper["side"] = "Upper"
     winAggDictLower["side"] = "Lower"
-    
+
+    println("finished lower")
+
+    #produce the GraphViz visualizations for this dataset; from ("biasGraphView.jl")
+#    graphAvoid(winAggDictUpper,winAggDictLower)
+#    println("finished graphing")
+#    #produce scatter plots for the aggregate edge types for countries; from ("biasAnalysis.jl")
+#    analyzeBiases(winAggDictUpper,winAggDictLower)
+#    println("finished scatter plots")
     return [winAggDictUpper,winAggDictLower]
 end
 

@@ -197,7 +197,8 @@ function yearsScoreAdjList(startYr = 1980, endYr = 1990)
        
     end
     adjMatScoreNoShows = missingCountryScoreInsert(adjMatScore)
-    return adjMatScoreNoShows   
+    return adjMatScoreNoShows
+    #return adjMatScore   
 end
 
 
