@@ -47,6 +47,15 @@ and is an extension of the code and research found in https://github.com/mantzar
 
 
 
+#### Looking at the years 1985-2015 and the TOTAL SCORE RECEIVED vs the TOTAL PREFERENCE produced (biased links to other countries over the years where each dot is a country's accumulation each decade in that time period
+
+ ![alt text](biasAssociationPlots/scatterScoreVSprefOut19852015win10alpha005.png)
+
+#### Looking at the years 1985-2015 and the TOTAL SCORE RECEIVED vs the TOTAL NEGLECT produced (biased links to other countries over the years where each dot is a country's accumulation each decade in that time period
+
+ ![alt text](biasAssociationPlots/scatterScoreVSNegOut19852015win10alpha005.png)
+
+
 
 
 
