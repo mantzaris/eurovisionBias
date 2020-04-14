@@ -21,13 +21,30 @@ and is an extension of the code and research found in https://github.com/mantzar
 
 
 
-#### Looking at years 2000-2005 and the edges of neglect between countries (single window)
+#### Looking at years 2000-2005 and the edges of NEGLECT (significant low votes) between countries 
 
  ![alt text](networkFigures/networkLowerOneWay20002005alpha005.png)
 
-#### Looking at the years 1980-2000 in a single 5 year significance window
+#### Looking at the years 1980-2000 and the edges of NEGLECT (significant low votes) between countries 
 
  ![alt text](networkFigures/networkLowerTotalOneWay1980to2000win5alpha0001.png)
+
+
+
+
+
+
+#### Looking at the years 2012-2017 and the edges of PREFERENCE (significant high votes) between countries 
+
+ ![alt text](networkFigures/networkUpperOneWay2012-2017alpha0.05.png)
+
+#### Looking at the years 2000-2016 and the edges of PREFERENCE (significant high votes) between countries that collude as mutually high votes
+
+ ![alt text](networkFigures/networkMutualUpperTotal2000to2016win8alpha0.05.png)
+
+
+
+
 
 
 
