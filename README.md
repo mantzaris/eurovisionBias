@@ -59,5 +59,3 @@ and is an extension of the code and research found in https://github.com/mantzar
 
 
 
-
-biasAssociationPlots/scatterScoreVSpreferenceIn19852015win10alpha005.png
