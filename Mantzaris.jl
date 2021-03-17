@@ -1,3 +1,5 @@
+using Statistics
+
 function Mantzaris(stYr = 1975,endYr = 1980,windowSize = 5)
 
     #load the data and add to a dictionary the number of countries in the year range
@@ -124,14 +126,14 @@ function windowScores(stYr,endYr,windowSize)
 	yrTmp = parse(Int,((split(rf,"."))[1]))   
 	fileTmp = open(string("./dataTables/",rf))#each file pipe
 	linesTmp = readlines(fileTmp)#read each file lines
-	origColNames = split(linesTmp[1],r",|\n",keep=false) #store the COL name list of the columns
+	origColNames = split(linesTmp[1],r",|\n",keepempty=false) #store the COL name list of the columns
         #print(origColNames);print("\n")
 	splice!(origColNames,1) #remove first entry
         #print(origColNames);print("\n")
         rowNAMES =[]
         
         for ii=2:length(linesTmp)#get the ROW's name list
-            rowNAMEStmp = split(linesTmp[ii],r",|\n",keep=false)
+            rowNAMEStmp = split(linesTmp[ii],r",|\n",keepempty=false)
             #print(rowNAMEStmp[1]);print("\n")
             append!(rowNAMES, [rowNAMEStmp[1]])
         end
@@ -144,15 +146,15 @@ function windowScores(stYr,endYr,windowSize)
 	scoreMat = zeros(nameNum,nameNum)
         #print(totalNames);print(scoreMat);print("\n")
 	for ii=2:length(linesTmp)#fill the scoremat
-	    lineScores = split(linesTmp[ii],r",|\n",keep=false)
+	    lineScores = split(linesTmp[ii],r",|\n",keepempty=false)
             votingCNTRY = lineScores[1]
             splice!(lineScores,1)
             lineScores = [parse(Int,lineScores[tt]) for tt in 1:length(lineScores)]
             for jj=1:length(lineScores)
                 scoreTMP = lineScores[jj]
                 colNAME = origColNames[jj]
-                newColNamePos = find([totalNames[tt] == colNAME for tt in 1:length(totalNames)])
-                scoreMat[ii-1,newColNamePos] = scoreTMP
+                newColNamePos = findall([totalNames[tt] == colNAME for tt in 1:length(totalNames)])
+                scoreMat[ii-1,newColNamePos] .= scoreTMP
             end
 
 	end  	    	     
@@ -190,13 +192,14 @@ function windowScores(stYr,endYr,windowSize)
 	    yrNames = namesDict[yr+winInd]        
 
 	    for rowNum=1:length(yrScoresMat[:,1])#change the year nameInds to the total window Inds of names
-		newIndsMat = []	    
-		for colNum=1:length(find(yrScoresMat[rowNum,:]))	    
-		    tmpNamesMat = yrNames[find(yrScoresMat[rowNum,:])]	#non-zero cols
-		    newIndsMat = sort(append!(find([namesTotal[ii] == tmpNamesMat[colNum] for ii in 1:length(namesTotal)]),newIndsMat))	
+		newIndsMat = []
+                
+		for colNum=1:length(findall(yrScoresMat[rowNum,:] .> 0))	    
+		    tmpNamesMat = yrNames[findall(yrScoresMat[rowNum,:] .> 0)]	#non-zero cols
+		    newIndsMat = sort(append!(findall([namesTotal[ii] == tmpNamesMat[colNum] for ii in 1:length(namesTotal)]),newIndsMat))	
 		end
-		rowNumNew = find([namesTotal[ii] == yrNames[rowNum] for ii in 1:length(namesTotal)])
-		matNew[rowNumNew,newIndsMat] = yrScoresMat[rowNum,find(yrScoresMat[rowNum,:])]	    
+		rowNumNew = findall([namesTotal[ii] == yrNames[rowNum] for ii in 1:length(namesTotal)])
+		matNew[rowNumNew,newIndsMat] = yrScoresMat[rowNum,findall(yrScoresMat[rowNum,:] .> 0)]	    
 	    end				
 
 	    winDict["$(yr)-$(yr+windowSize)"]["scoremat"] = matPrev + matNew
@@ -233,8 +236,8 @@ function scoreSim(stYr,endYr,countryYearsNum)
             else
                 score = Allocated(-1,NUM)
             end
-            append!(ONE_SIMULATION,[score])
-        end
+            append!(ONE_SIMULATION,score)
+        end        
         avgSim = mean(ONE_SIMULATION)
         append!(AVG_SIMULATION,[avgSim])
     end
@@ -253,14 +256,14 @@ function Sequential(yr,NUM)
     #so we iterate through the scores to see how many of the points we amass
     if( 1964 <= yr <= 1966)
         for ii=1:length(SCORES1)
-            position = ceil(rand(1,1)*NUM)
+            position = ceil.(rand(1,1)*NUM)
             if([position][1] == 1)
                 score = SCORES1[ii] + score
             end                                        
         end
     elseif(yr==1974 || (1967<=yr<=1970) || (1957<=yr<=1961))
         for ii=1:length(SCORES2)
-            position = ceil(rand(1,1)*NUM)
+            position = ceil.(rand(1,1)*NUM)
             if([position][1] == 1)
                 score = SCORES2[ii] + score
             end                                        
@@ -276,7 +279,7 @@ function Allocated(yr,NUM)
     SCORES1 = [3,2,1]
     SCORES2 = [5,4,3,2,1]
     SCORES3 = [12,10,8,7,6,5,4,3,2,1]
-    position = ceil(rand(1,1)*NUM)	
+    position = Int.(ceil.(rand(1,1)*NUM))
     if(yr >= 1975 && yr <= 2016)
         SCORES = SCORES3
     elseif(yr == 1962)

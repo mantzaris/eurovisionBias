@@ -1,3 +1,4 @@
+using DelimitedFiles
 
 function demo(stYr=1975,endYr=1985,windowSize=5)
     southWest = ["Portugal","Spain","Malta","SanMarino","Andorra","Monaco","Morocco","Italy"]
@@ -20,11 +21,11 @@ function demo(stYr=1975,endYr=1985,windowSize=5)
                 
         seenC = []                
         for pair in oneWays
-            pair = replace(pair,"&","")
-            pair = replace(pair,".","")
+            pair = replace(pair,"&"=>"")
+            pair = replace(pair,"."=>"")
             pairTmp = split(pair,'-')
-            pairTmp[1] =  replace(pairTmp[1]," ","")
-            pairTmp[2] =  replace(pairTmp[2]," ","")
+            pairTmp[1] =  replace(pairTmp[1]," "=>"")
+            pairTmp[2] =  replace(pairTmp[2]," "=>"")
             if(!(pairTmp[1] in seenC))
                 if(pairTmp[1] in east)
                     network = string(network,string(pairTmp[1]," [style=filled,fillcolor=olivedrab3]; "))
@@ -63,11 +64,11 @@ function demo(stYr=1975,endYr=1985,windowSize=5)
         collusion1 = []
         for (ind,pair) in enumerate(twoWays)
             print(pair);print("\n")
-            pair = replace(pair,"&","")
-            pair = replace(pair,".","")
+            pair = replace(pair,"&"=>"")
+            pair = replace(pair,"."=>"")
             pairTmp = split(pair,'-')
-            pairTmp[1] =  replace(pairTmp[1]," ","")
-            pairTmp[2] =  replace(pairTmp[2]," ","")
+            pairTmp[1] =  replace(pairTmp[1]," "=>"")
+            pairTmp[2] =  replace(pairTmp[2]," "=>"")
             edge = string(pairTmp[1],"->",pairTmp[2]," [dir=both color=red penwidth=3];")
             network = string(network,edge)
             append!(collusion1,[string(pairTmp[1],pairTmp[2])])
@@ -75,11 +76,11 @@ function demo(stYr=1975,endYr=1985,windowSize=5)
         end
         print(collusion1)
         for pair in oneWays
-            pair = replace(pair,"&","")
-            pair = replace(pair,".","")
+            pair = replace(pair,"&"=>"")
+            pair = replace(pair,"."=>"")
             pairTmp = split(pair,'-')
-            pairTmp[1] =  replace(pairTmp[1]," ","")
-            pairTmp[2] =  replace(pairTmp[2]," ","")
+            pairTmp[1] =  replace(pairTmp[1]," "=>"")
+            pairTmp[2] =  replace(pairTmp[2]," "=>"")
             edge = string(pairTmp[1],"->",pairTmp[2],";")
             if(!( string(pairTmp[1],pairTmp[2]) in collusion1))
                 network = string(network,edge)
@@ -106,11 +107,11 @@ yr = stYr
         oneWays = collusionDict["1way:$(yr)-$(yr + windowSize)"]    
         twoWays = collusionDict["2way:$(yr)-$(yr + windowSize)"]
         for pair in oneWays
-            pair = replace(pair,"&","")        
-            pair = replace(pair,".","")        
+            pair = replace(pair,"&"=>"")        
+            pair = replace(pair,"."=>"")        
             pairTmp = split(pair,'-')        
-            pairTmp[1] =  replace(pairTmp[1]," ","")        
-            pairTmp[2] =  replace(pairTmp[2]," ","")
+            pairTmp[1] =  replace(pairTmp[1]," "=>"")        
+            pairTmp[2] =  replace(pairTmp[2]," "=>"")
             edgeName = string(pairTmp[1],"->",pairTmp[2])
             print(edgeName)
             if(haskey(repeatWinds, string(pairTmp[1],"->",pairTmp[2]) ))                
@@ -199,11 +200,11 @@ yr = stYr
       
         twoWays = collusionDict["2way:$(yr)-$(yr + windowSize)"]
         for pair in twoWays
-            pair = replace(pair,"&","")        
-            pair = replace(pair,".","")        
+            pair = replace(pair,"&"=>"")        
+            pair = replace(pair,"."=>"")        
             pairTmp = split(pair,'-')        
-            pairTmp[1] =  replace(pairTmp[1]," ","")        
-            pairTmp[2] =  replace(pairTmp[2]," ","")
+            pairTmp[1] =  replace(pairTmp[1]," "=>"")        
+            pairTmp[2] =  replace(pairTmp[2]," "=>"")
             edgeName = string(pairTmp[1],"->",pairTmp[2])
             print(edgeName)
             if(haskey(repeatWinds, string(pairTmp[1],"->",pairTmp[2]) ))                
