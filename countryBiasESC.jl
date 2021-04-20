@@ -8,8 +8,8 @@
 =#
 
 #need GraphViz to visualize the results
-using GraphViz
-
+#using GraphViz
+using Statistics
 
 #csvDir2AdjList.jl is the file with functions to call upon the real data to get the aggregates
 include("csvDir2AdjList.jl")

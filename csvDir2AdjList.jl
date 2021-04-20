@@ -118,7 +118,7 @@ function initCountryPairAdjList(startYr = 1980, endYr = 1990)
     adjList = yearsScoreAdjList(startYr, endYr)
     cntryNames = subsetCountryNamesArray(startYr,endYr)
     countryNum = length(cntryNames)
-    aggregateAdjList = Array{Any}(countryNum^2 - countryNum, 3)
+    aggregateAdjList = Array{Any}(undef,countryNum^2 - countryNum, 3)
     #INIT: fill the names and initial aggregate scores
     tmpRow = 1
     for ii in 1:length(cntryNames) #over each first cycle of countries
@@ -141,7 +141,7 @@ function aggregateAdjList(startYr = 1980, endYr = 1990)
     adjList = yearsScoreAdjList(startYr, endYr)
     cntryNames = subsetCountryNamesArray(startYr,endYr)
     countryNum = length(cntryNames)
-    aggregateAdjList = Array{Any}(countryNum^2 - countryNum, 3)
+    aggregateAdjList = Array{Any}(undef,countryNum^2 - countryNum, 3)
     #INIT: fill the names and initial aggregate scores
     tmpRow = 1
     for ii in 1:length(cntryNames) #over each first cycle of countries
@@ -178,14 +178,14 @@ function yearsScoreAdjList(startYr = 1980, endYr = 1990)
         end
         fileTmp = open(string("./dataTables/",dF))
         linesTmp = readlines(fileTmp)#read each file lines
-        origColNames = split(linesTmp[1],r",|\n",keep=false)#get line1 into components      
+        origColNames = split(linesTmp[1],r",|\n",keepempty=false)#get line1 into components      
         for ii=2:length(linesTmp)#get the names on the rows
-            rowTmp = split(linesTmp[ii],r",|\n",keep=false)
+            rowTmp = split(linesTmp[ii],r",|\n",keepempty=false)
             for jj=2:length(origColNames)
                 if(ii!=jj)
                     #print("$(rowTmp[1])->$(origColNames[jj])=$(rowTmp[jj]),")
                     if(isempty(adjMatScore) == true)
-                        adjMatScore = Array{Any}(1,4)
+                        adjMatScore = Array{Any}(undef,1,4)
                         adjMatScore[1,:] = [rowTmp[1],origColNames[jj],yrTmp,parse(Int,rowTmp[jj])]
                     else
                         #println([rowTmp[1],origColNames[jj],yrTmp,parse(Int,rowTmp[jj])])
@@ -224,7 +224,7 @@ function missingCountryScoreInsert(adjMatScore)
             end
         end
         sumTmp = sum(adjMatScore[rowsYear,4])        
-        muTmp = round(sumTmp/(length(adjMatScore[rowsYear,4])+ind),4)
+        muTmp = round(sumTmp/(length(adjMatScore[rowsYear,4])+ind),digits=4)
         #println(muTmp)
         muTmp = convert(Int,round(muTmp))
         #println(muTmp)
@@ -260,9 +260,9 @@ function totalScoreAdjList()
         
         fileTmp = open(string("./dataTables/",dF))
         linesTmp = readlines(fileTmp)#read each file lines
-        origColNames = split(linesTmp[1],r",|\n",keep=false)#get line1 into components      
+        origColNames = split(linesTmp[1],r",|\n",keepempty=false)#get line1 into components      
         for ii=2:length(linesTmp)#get the names on the rows
-            rowTmp = split(linesTmp[ii],r",|\n",keep=false)
+            rowTmp = split(linesTmp[ii],r",|\n",keepempty=false)
             for jj=2:length(origColNames)
                 if(ii!=jj)
                     #print("$(rowTmp[1])->$(origColNames[jj])=$(rowTmp[jj]),")
@@ -307,11 +307,12 @@ function subsetHeaderNames(stYr,endYr)
         if(stYr <= yrTmp <= endYr)            
             fileTmp = open(string("./dataTables/",dF))
             linesTmp = readlines(fileTmp)#read each file lines
-            origColNames = split(linesTmp[1],r",|\n",keep=false)#get line1 into components
+            
+            origColNames = split(linesTmp[1],r",|\n",keepempty=false)#get line1 into components
             splice!(origColNames,1)#get rid of topleft corner
             rowNAMES = []#temp store
             for ii=2:length(linesTmp)#get the names on the rows
-                rowNAMEStmp = split(linesTmp[ii],r",|\n",keep=false)
+                rowNAMEStmp = split(linesTmp[ii],r",|\n",keepempty=false)
                 append!(rowNAMES, [rowNAMEStmp[1]])
             end
             totalNamesYr = sort(unique(append!(rowNAMES,origColNames)))#for yrTmp names
@@ -332,11 +333,11 @@ function totalHeaderNames()
         yrTmp = parse(Int,((split(dF,"."))[1]))
         fileTmp = open(string("./dataTables/",dF))
       	linesTmp = readlines(fileTmp)#read each file lines
-        origColNames = split(linesTmp[1],r",|\n",keep=false)#get line1 into components
+        origColNames = split(linesTmp[1],r",|\n",keepempty=false)#get line1 into components
         splice!(origColNames,1)#get rid of topleft corner
         rowNAMES = []#temp store
         for ii=2:length(linesTmp)#get the names on the rows
-            rowNAMEStmp = split(linesTmp[ii],r",|\n",keep=false)
+            rowNAMEStmp = split(linesTmp[ii],r",|\n",keepempty=false)
             append!(rowNAMES, [rowNAMEStmp[1]])
         end
         totalNamesYr = sort(unique(append!(rowNAMES,origColNames)))#for yrTmp names
