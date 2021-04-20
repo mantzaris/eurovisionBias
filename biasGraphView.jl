@@ -280,9 +280,9 @@ end
 
 function fixBadChars(str_Pre)
        
-    strPre = replace(str_Pre,"&","")
-    strPre = replace(strPre,".","")
-    strPre =  replace(strPre," ","")
+    strPre = replace(str_Pre,"&"=>"")
+    strPre = replace(strPre,"."=>"")
+    strPre =  replace(strPre," "=>"")
         
     return strPre
 end
@@ -293,9 +293,9 @@ function removeBadChars(strs_Pre)
     
     for ii in 1:length(strs_Pre)
         strPre = strs_Pre[ii]
-        strPre = replace(strPre,"&","")
-        strPre = replace(strPre,".","")
-        strPre =  replace(strPre," ","")
+        strPre = replace(strPre,"&"=>"")
+        strPre = replace(strPre,"."=>"")
+        strPre =  replace(strPre," "=>"")
         strs_Pre[ii] = strPre
     end
     
@@ -524,7 +524,9 @@ function countryMutualEdgesTotal(wAGLOW)
                             #permuted possible orderings as a concatenation
                             #println(mutualAdjList)
                             if( isempty(mutualAdjList) )
-                                mutualAdjList = vcat(mutualAdjList,[cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
+                                #println(size(mutualAdjList))
+                                
+                                mutualAdjList = vcat([cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
                                 #println("in if for isempty")
                                 #println([cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
                             elseif( count(mutualAdjList[:,3] .== cntry1*cntry2) > 0 )

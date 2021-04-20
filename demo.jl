@@ -1,4 +1,5 @@
 using DelimitedFiles
+include("Mantzaris.jl")
 
 function demo(stYr=1975,endYr=1985,windowSize=5)
     southWest = ["Portugal","Spain","Malta","SanMarino","Andorra","Monaco","Morocco","Italy"]
