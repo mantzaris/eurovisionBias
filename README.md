@@ -20,6 +20,16 @@ and is an extension of the code and research found in https://github.com/mantzar
 * This can be used to question whether the biased votes emerge because audience members see these biases as means to the end of succeeding in the competition. The results show that neglect does not associate with reduced total score so there is no perception of cost for neglecting countries and results also show that preferential biases associate with larger score accumulations probably for reciprocal behavior. (more in the paper can be found)
 
 
+# <span style="color:red">Running the code</span>
+(from Linux) simplest way is to run *main.jl* `function main(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)`, have graphviz installed, in the Julia REPL (prompt of Julia) via:
+
+`include("main.jl")`
+
+`main(1980,1990,5,0.05)`
+
+the first number is the starting year, the second param the end year of the analysis, the 3rd param is the window size to segment the time line, and the last is the alpha for the thresholding (p-value). The smaller the alpha the more *conservative* it is (less edges as only the strongest biases and neglect get used) and larger alpha values allow more edges. You can find the output for the overall results in the same directory as the main.jl file and the rest in the graphs and plots folders
+<hr>
+
 
 #### Looking at years 2000-2005 and the edges of NEGLECT (significant low votes) between countries 
 
