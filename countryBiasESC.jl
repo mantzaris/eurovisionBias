@@ -42,7 +42,7 @@ function biasesESC(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
     #Now we must obtain the averages for each country from to country (we need to have the CSV data read)
     #return the dictionary of the time windows and the aggregate adjacency list of scores, country names, average scores aggregates for each window, and the thresholds of when the average surpasses the alpha value for significance. keys: "countries" "thresholdSigAdjList" "avgScoreAggregateAdjList" "scoreAggregateAdjList"
     winAggDictUpper = windowsDictThresholdsAdjList(windowConf, startYr, endYr, windowSize)
-    println(winAggDictUpper
+    println(winAggDictUpper)
     println("finished Agg Dict Upper")
     #To reduce computations later on, we now add to the dictionary a key to the total threshold surpassings as a count for the set of windows (1 per window significance) and get the total country name list for the full time period each window covers
     winAggDictUpper = dictTotalThresholdsAdjListWindowCount(winAggDictUpper,startYr,endYr,windowSize)

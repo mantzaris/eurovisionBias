@@ -530,13 +530,13 @@ function countryMutualEdgesTotal(wAGLOW)
                                 #println("in if for isempty")
                                 #println([cntry1 cntry2 cntry1*cntry2 cntry2*cntry1 1])
                             elseif( count(mutualAdjList[:,3] .== cntry1*cntry2) > 0 )
-                                ind = find(mutualAdjList[:,3] .== cntry1*cntry2)
-                                mutualAdjList[ind,5] += 1
+                                ind = findall(mutualAdjList[:,3] .== cntry1*cntry2)
+                                mutualAdjList[ind,5] .+= 1
                                 #println("in elseif for cntry1*cntry2")
                                 #println(mutualAdjList[ind,:])
                             elseif( count(mutualAdjList[:,3] .== cntry2*cntry1) > 0 )
-                                ind = find(mutualAdjList[:,3] .== cntry2*cntry1)
-                                mutualAdjList[ind,5] += 1
+                                ind = findall(mutualAdjList[:,3] .== cntry2*cntry1)
+                                mutualAdjList[ind,5] .+= 1
                                 #println("in elseif for cntry2*cntry1")
                                 #println(mutualAdjList[ind,:])
                             else 
