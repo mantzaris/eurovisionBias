@@ -17,7 +17,7 @@ other = ["Australia"]
 #needed for the plots
 using Plots
 #use pyplot()
-pyplot()
+gr()#pyplot()
 #StatsBase (for Kendall Tau)
 using StatsBase
 #To get the cdf of the student t distribution

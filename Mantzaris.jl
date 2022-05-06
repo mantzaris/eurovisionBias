@@ -150,7 +150,7 @@ function windowScores(stYr,endYr,windowSize)
             votingCNTRY = lineScores[1]
             splice!(lineScores,1)
             lineScores = [parse(Int,lineScores[tt]) for tt in 1:length(lineScores)]
-            for jj=1:length(lineScores)
+            for jj=1:length(lineScores)-1
                 scoreTMP = lineScores[jj]
                 colNAME = origColNames[jj]
                 newColNamePos = findall([totalNames[tt] == colNAME for tt in 1:length(totalNames)])

@@ -5,7 +5,7 @@
 southWest = ["Portugal","Spain","Malta","SanMarino","Andorra","Monaco","Morocco","Italy"]
 north = ["Iceland","Denmark","Norway","Sweden","Finland"]
 northWest = ["UnitedKingdom","Ireland","Belgium","France","Luxembourg"]
-central = ["Germany","Austria","TheNetherlands","Switzerland","Slovenia","CzechRepublic","Hungary","Slovakia"]
+central = ["Germany","Austria","TheNetherlands","Switzerland","Slovenia","CzechRepublic","Hungary","Slovakia","Netherlands"]
 southEast = ["Greece","Montenegro","Cyprus","Albania","Bulgaria","Croatia","BosniaHerzegovina","Turkey","FYRMacedonia","Romania","Serbia","Israel","Yugoslavia","SerbiaMontenegro"]
 east = ["Russia","Ukraine","Moldova","Belarus","Poland","Georgia","Armenia","Azerbaijan","Estonia","Lithuania","Latvia"]
 other = ["Australia"]
@@ -320,7 +320,7 @@ function regionNodeString(countryInput)
     elseif(countryInput in other)        
         nodeStr = " [style=filled,fillcolor=whitesmoke]; "
     else
-        
+        nodeStr = " [style=filled,fillcolor=whitesmoke]; "
         print("country to region not found: ")
         println(countryInput)
     end
