@@ -89,9 +89,9 @@ function demo(stYr=1975,endYr=1985,windowSize=5)
             
         end
         network = string(network,"}")
-        fileName = string("network",":$(yr)-$(yr + windowSize)",".dot")
+        fileName = string("./graphs/","network",":$(yr)-$(yr + windowSize)",".dot")
         print(fileName)
-        filePNG = string("network",":$(yr)-$(yr + windowSize)",".png")
+        filePNG = string("./graphs/","network",":$(yr)-$(yr + windowSize)",".png")
         print(filePNG)
         writedlm(string("./",fileName), [network])
         
@@ -185,11 +185,11 @@ for entry in repeatWinds
     #end
 end
     network = string(network,"}")
-    fileName = string("networkTotal",":$(stYr)-$(endYr)","windowSize$(windowSize)",".dot")
+    fileName = string("./graphs/","networkTotal",":$(stYr)-$(endYr)","windowSize$(windowSize)",".dot")
     print(fileName)
-    filePNG = string("networkTotal",":$(stYr)-$(endYr)","windowSize$(windowSize)",".png")
+    filePNG = string("./graphs/","networkTotal",":$(stYr)-$(endYr)","windowSize$(windowSize)",".png")
     print(filePNG)
-    writedlm(string("./",fileName), [network])
+    writedlm(string(fileName), [network])
 
     run(`dot $fileName -Tpng -o $filePNG`)
     print(network)
@@ -277,11 +277,11 @@ for entry in repeatWinds
     network = string(network,edgeName)
 end
     network = string(network,"}")
-    fileName = string("networkTotalCollusion",":$(stYr)-$(endYr)","windowSize$(windowSize)",".dot")
+    fileName = string("./graphs/","networkTotalCollusion",":$(stYr)-$(endYr)","windowSize$(windowSize)",".dot")
     print(fileName)
-    filePNG = string("networkTotalCollusion",":$(stYr)-$(endYr)","windowSize$(windowSize)",".png")
+    filePNG = string("./graphs/","networkTotalCollusion",":$(stYr)-$(endYr)","windowSize$(windowSize)",".png")
     print(filePNG)
-    writedlm(string("./",fileName), [network])
+    writedlm(string(fileName), [network])
 
     run(`dot $fileName -Tpng -o $filePNG`)
     print(network)
@@ -293,7 +293,7 @@ end
 print("\n the ratio of the two Way\n")
 print(ratioTwoWay)
 fileNameTmp = string("netRatios",":$(stYr)-$(endYr)","windowSize$(windowSize)",".txt")
-writedlm(string("./",fileNameTmp), ratioTwoWay)
+writedlm(string("./graphs/",fileNameTmp), ratioTwoWay)
 
      
 end

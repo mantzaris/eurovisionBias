@@ -7,8 +7,24 @@ include("biasGraphView.jl")
 #eg. main(1980,1990,5,0.05)
 function main(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
 
-    mkdir("./plots")
-    mkdir("./graphs")
+    try
+        mkdir("./plots")      
+    catch
+        println("dirs exist")
+    end
+    try
+        mkdir("./graphs/")      
+    catch
+        println("dirs exist")
+    end
+    try
+        mkdir("./biasAssociationPlots")      
+    catch
+        println("dirs exist")
+    end
+    
+
+    
 
 
     #produces the plots for collusion 1 and 2 way
