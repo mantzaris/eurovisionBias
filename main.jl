@@ -6,6 +6,11 @@ include("biasAnalysis.jl")
 include("biasGraphView.jl")
 #eg. main(1980,1990,5,0.05)
 function main(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)
+
+    mkdir("./plots")
+    mkdir("./graphs")
+
+
     #produces the plots for collusion 1 and 2 way
     
     demo(startYr,endYr,windowSize)
