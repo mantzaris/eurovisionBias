@@ -1,1 +1,0 @@
-digraph avoid {  Cyprus [style=filled,fillcolor=darkgoldenrod1]; Turkey [style=filled,fillcolor=darkgoldenrod1]; Denmark [style=filled,fillcolor=dodgerblue]; Turkey [style=filled,fillcolor=darkgoldenrod1]; Cyprus->Turkey [dir=both color=red penwidth=1];Denmark->Turkey [dir=both color=red penwidth=1];}
