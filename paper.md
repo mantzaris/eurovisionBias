@@ -59,8 +59,7 @@ the tool looks at the number of countries that participated for each year and th
 scheme that is applicable to calculate a significance threshold $s_{\alpha,\mathbf{T}}$.
 This is done via a Monte Carlo simulation of the null hypothesis of countries voting
 uniformly. With the threshold each country voting pattern can be compared via
-
-$$E_{i\rightarraow j,\mathbf{T}} = \sum^{\mathbf{T}}_{t=\mathbf{T}[1]}(c_{i\rightarrow j,t}> s_{\alpha,\mathbf{T}}).$$
+$$E_{i\rightarrow j,\mathbf{T}} = \sum^{\mathbf{T}}_{t=\mathbf{T}[1]}(c_{i\rightarrow j,t}> s_{\alpha,\mathbf{T}}).$$
 
 Details about the equations implemented in this tool can be found in
 [@mantzaris2018preference] and [@mantzaris2017examining].
