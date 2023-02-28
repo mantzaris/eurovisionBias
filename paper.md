@@ -60,6 +60,7 @@ scheme that is applicable to calculate a significance threshold $s_{\alpha,\math
 This is done via a Monte Carlo simulation of the null hypothesis of countries voting
 uniformly. With the threshold each country voting pattern can be compared via
 
+$$E_{i\rightarraow j,\mathbf{T}} = \sum^{\mathbf{T}}_{t=\mathbf{T}[1]}(c_{i\rightarrow j,t}> s_{\alpha,\mathbf{T}}).$$
 
 Details about the equations implemented in this tool can be found in
 [@mantzaris2018preference] and [@mantzaris2017examining].
@@ -77,8 +78,6 @@ having graphviz installed on a Linux system. The program can be started by
 
 
 
-
-
 $$\Theta(x) = \left\{\begin{array}{l}
 0\textrm{ if } x < 0\cr
 1\textrm{ else}
@@ -92,6 +91,4 @@ and refer to \autoref{eq:fourier} from text.
 
 # Citations
 
-Citations to entries in paper.bib should be in
 [rMarkdown](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)
-format.
