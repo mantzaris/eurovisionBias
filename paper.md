@@ -70,23 +70,20 @@ types of edges investigated are single directed biases (directed blue edges),
 and collusive (bi-directional blue edges) biases. This software takes the unique approach
 of also calculated the negative side of the distribution representing 'neglect'
 with red edges (directed for one-way and mutual neglect with bi-directional edges).
+Since the time of the methodological exploration this package has undergone changes so
+that the users can run the tool using a single command and have all the models run.
 
 This tool is written in Julia Lang [@bezanson2017julia] and uses graphviz [@ellson2004graphviz]
 for the production of the networks of bias. It has been tested using version 1.8 of Julia and
-having graphviz installed on a Linux system. The program can be started by 
+having graphviz installed on a Linux system. The program can be started by starting the Julia
+REPL, including the main script via *include("main.jl")*, and then running *main(1980,1990,5,0.05)*.
+This will run and analysis for the years 1980 till 1990 with 2 consecutive time windows of 5 years each.
+The last argument (0.05) is the pvalue for the significance of the biased associations 
+to be included in the results, where each association is represented as an edge in the graph
+connecting ESC participants. 
 
 
 
-$$\Theta(x) = \left\{\begin{array}{l}
-0\textrm{ if } x < 0\cr
-1\textrm{ else}
-\end{array}\right.$$
-
-You can also use plain \LaTeX for equations
-\begin{equation}\label{eq:fourier}
-\hat f(\omega) = \int_{-\infty}^{\infty} f(x) e^{i\omega x} dx
-\end{equation}
-and refer to \autoref{eq:fourier} from text.
 
 # Citations
 
