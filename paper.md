@@ -16,9 +16,6 @@ authors:
     orcid: 0000-0002-4603-3110
     #equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
     affiliation: 2
-  - name: Author with no affiliation
-    corresponding: true # (This is how to denote the corresponding author)
-    affiliation: 3
 affiliations:
  - name: Department of Statistics and Data Science, University of Central Florida
    index: 1
