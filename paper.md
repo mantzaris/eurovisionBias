@@ -1,5 +1,5 @@
 ---
-title: 'Foo Bar Zoo'
+title: 'EurovisionBias, a tool to investigate voting patterns in the Eurovision Song Contest'
 tags:
   - Eurovision
   - Collusion Detection
@@ -29,8 +29,8 @@ bibliography: paper.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
 # https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
-aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
-aas-journal: Astrophysical Journal <- The name of the AAS journal.
+# aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
+# aas-journal: Astrophysical Journal <- The name of the AAS journal.
 ---
 
 # Summary
@@ -47,11 +47,11 @@ signal a mutual sentiment via the ESC platform.
 # Statement of need
 
 `EurovisionBias` is a tool to help social scientists examine the voting biases
-present in the historical score data. Understanding biases in this competition
+present in the competition's historical score data. Understanding biases in this competition
 has been noted as being important by prominent political scientists who put
-forward anthropological theories for how large scale affiliations evolve. This
-study is also important for how in general biases and collusion in voting systems
-can be studied and how taking a network approach can be useful.
+forward anthropological theories for how large scale affiliations evolve [@yair1995unite].
+This study is also important for how in general biases and collusion in voting systems
+can be studied and how taking a network approach can be useful [@ginsburgh2008eurovision].
 
 The user can produce an analysis of the
 data by supplying a starting year, and end year, a period of the time window, and
@@ -62,9 +62,10 @@ the tool looks at the number of countries that participated for each year and th
 scheme that is applicable to calculate a significance threshold $s_{\alpha,\mathbf{T}}$.
 This is done via a Monte Carlo simulation of the null hypothesis of countries voting
 uniformly. With the threshold each country voting pattern can be compared via
+$$E_{i\rightarraow j,\mathbf{T}} = \sum^{\mathbf{T}}_{t=\mathbf{T}[1]}(c_{i\rightarrow j,t}> s_{\alpha,\mathbf{T}}).$$
 
-
-
+Details about the equations implemented in this tool can be found in
+[@mantzaris2018preference] and [@mantzaris2017examining].
 The results produced are a set of scatter plots for the votes a country received/delegated
 with the number of biased associations received/delegated and network diagrams.
 The network diagrams have countries as nodes and the associations as edges. The
@@ -73,34 +74,13 @@ and collusive (bi-directional blue edges) biases. This software takes the unique
 of also calculated the negative side of the distribution representing 'neglect'
 with red edges (directed for one-way and mutual neglect with bi-directional edges).
 
-This tool is written in Julia Lang and uses graphviz for the production of
-the networks of bias. It has been tested using version 1.8 and having graphviz installed
-on a Linux system. 
-
-`Gala` is an Astropy-affiliated Python package for galactic dynamics. Python
-enables wrapping low-level languages (e.g., C) for speed without losing
-flexibility or ease-of-use in the user-interface. The API for `Gala` was
-designed to provide a class-based and user-friendly interface to fast (C or
-Cython-optimized) implementations of common operations such as gravitational
-potential and force evaluation, orbit integration, dynamical transformations,
-and chaos indicators for nonlinear dynamics. `Gala` also relies heavily on and
-interfaces well with the implementations of physical units and astronomical
-coordinate systems in the `Astropy` package [@astropy] (`astropy.units` and
-`astropy.coordinates`).
-
-`Gala` was designed to be used by both astronomical researchers and by
-students in courses on gravitational dynamics or astronomy. It has already been
-used in a number of scientific publications [@Pearson:2017] and has also been
-used in graduate courses on Galactic dynamics to, e.g., provide interactive
-visualizations of textbook material [@Binney:2008]. The combination of speed,
-design, and support for Astropy functionality in `Gala` will enable exciting
-scientific explorations of forthcoming data releases from the *Gaia* mission
-[@gaia] by students and experts alike.
-
-# Mathematics
+This tool is written in Julia Lang [@bezanson2017julia] and uses graphviz [@ellson2004graphviz]
+for the production of the networks of bias. It has been tested using version 1.8 of Julia and
+having graphviz installed on a Linux system. The program can be started by 
 
 
-Double dollars make self-standing equations:
+
+
 
 $$\Theta(x) = \left\{\begin{array}{l}
 0\textrm{ if } x < 0\cr
