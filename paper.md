@@ -1,30 +1,30 @@
 ---
 title: 'Foo Bar Zoo'
 tags:
-  - Python
-  - astronomy
-  - dynamics
-  - galactic dynamics
-  - milky way
+  - Eurovision
+  - Collusion Detection
+  - Voting System
+  - Computational Social Science
+  - Julia Lang
 authors:
-  - name: Adrian M. Price-Whelan
-    orcid: 0000-0000-0000-0000
-    equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
-  - name: Author Without ORCID
-    equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
+  - name: Alexander V. Mantzaris
+    orcid: 0000-0002-0026-5725
+    corresponding: true
+    #equal-contrib: false
+    affiliation: 1
+  - name: Theodoros Panagiotakopoulos
+    orcid: 0000-0002-4603-3110
+    #equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
     affiliation: 2
   - name: Author with no affiliation
     corresponding: true # (This is how to denote the corresponding author)
     affiliation: 3
 affiliations:
- - name: Lyman Spitzer, Jr. Fellow, Princeton University, USA
+ - name: Department of Statistics and Data Science, University of Central Florida
    index: 1
- - name: Institution Name, Country
+ - name: Department of Physics, University of Central Florida
    index: 2
- - name: Independent Researcher, Country
-   index: 3
-date: 13 August 2017
+date: 27 February 2023
 bibliography: paper.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
@@ -35,17 +35,49 @@ aas-journal: Astrophysical Journal <- The name of the AAS journal.
 
 # Summary
 
-The forces on stars, galaxies, and dark matter under external gravitational
-fields lead to the dynamical evolution of structures in the universe. The orbits
-of these bodies are therefore key to understanding the formation, history, and
-future state of galaxies. The field of "galactic dynamics," which aims to model
-the gravitating components of galaxies to study their structure and evolution,
-is now well-established, commonly taught, and frequently used in astronomy.
-Aside from toy problems and demonstrations, the majority of problems require
-efficient numerical tools, many of which require the same base code (e.g., for
-performing numerical orbit integration).
+The Eurovision Song Contest (ESC) is one of the largest annual events
+on the planet gathering hundreds of millions of viewers for a single broadcasting.
+It involves a set of participating countries to send representative musicians to
+display an expression of music and then have the rest of the countries allocate a score.
+Over the years it has been speculated that countries have not voted soley based
+upon artistic merit but have been biased by national preferences. There has also
+been speculation that collusion takes place where points are reciprocated in order
+signal a mutual sentiment via the ESC platform.
 
 # Statement of need
+
+`EurovisionBias` is a tool to help social scientists examine the voting biases
+present in the historical score data. Understanding biases in this competition
+has been noted as being important by prominent political scientists who put
+forward anthropological theories for how large scale affiliations evolve. This
+study is also important for how in general biases and collusion in voting systems
+can be studied and how taking a network approach can be useful.
+
+The user can produce an analysis of the
+data by supplying a starting year, and end year, a period of the time window, and
+a p-value for the statistical significance of each association. The changes in
+the voting schemes which changed are accounted for as well as the absence of a
+country for a subset of the years in the time period. For the years selected,
+the tool looks at the number of countries that participated for each year and the voting
+scheme that is applicable to calculate a significance threshold $s_{\alpha,\mathbf{T}}$.
+This is done via a Monte Carlo simulation of the null hypothesis of countries voting
+uniformly. With the threshold each country voting pattern can be compared via
+\begin{equation}\label{eq:fourier}
+E_{i\rightarraow j,\mathbf{T}} = \sum^{\mathbf{T}}_{t=\mathbf{T}[1]}(c_{i\rightarrow j,t}> s_{\alpha,\mathbf{T}}).
+\end{equation}
+
+
+The results produced are a set of scatter plots for the votes a country received/delegated
+with the number of biased associations received/delegated and network diagrams.
+The network diagrams have countries as nodes and the associations as edges. The
+types of edges investigated are single directed biases (directed blue edges),
+and collusive (bi-directional blue edges) biases. This software takes the unique approach
+of also calculated the negative side of the distribution representing 'neglect'
+with red edges (directed for one-way and mutual neglect with bi-directional edges).
+
+This tool is written in Julia Lang and uses graphviz for the production of
+the networks of bias. It has been tested using version 1.8 and having graphviz installed
+on a Linux system. 
 
 `Gala` is an Astropy-affiliated Python package for galactic dynamics. Python
 enables wrapping low-level languages (e.g., C) for speed without losing
@@ -69,7 +101,6 @@ scientific explorations of forthcoming data releases from the *Gaia* mission
 
 # Mathematics
 
-Single dollars ($) are required for inline mathematics e.g. $f(x) = e^{\pi/x}$
 
 Double dollars make self-standing equations:
 
