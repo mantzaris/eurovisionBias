@@ -21,7 +21,7 @@ and is an extension of the code and research found in https://github.com/mantzar
 
 
 # <span style="color:red">Running the code</span>
-(from Linux) simplest way is to run *main.jl* `function main(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)`, have graphviz installed, in the Julia REPL (prompt of Julia) via:
+(from Linux) simplest way is to run *main.jl* `function main(startYr = 1980, endYr = 1990, windowSize = 5, alpha = 0.05)`, have graphviz installed that is called from Julia, in the Julia REPL (prompt of Julia) via:
 
 `include("main.jl")`
 
