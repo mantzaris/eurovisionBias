@@ -27,10 +27,7 @@ affiliations:
 date: 27 February 2023
 bibliography: paper.bib
 
-# Optional fields if submitting to a AAS journal too, see this blog post:
-# https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
-# aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
-# aas-journal: Astrophysical Journal <- The name of the AAS journal.
+
 ---
 
 # Summary
@@ -62,7 +59,7 @@ the tool looks at the number of countries that participated for each year and th
 scheme that is applicable to calculate a significance threshold $s_{\alpha,\mathbf{T}}$.
 This is done via a Monte Carlo simulation of the null hypothesis of countries voting
 uniformly. With the threshold each country voting pattern can be compared via
-$$E_{i\rightarraow j,\mathbf{T}} = \sum^{\mathbf{T}}_{t=\mathbf{T}[1]}(c_{i\rightarrow j,t}> s_{\alpha,\mathbf{T}}).$$
+
 
 Details about the equations implemented in this tool can be found in
 [@mantzaris2018preference] and [@mantzaris2017examining].
