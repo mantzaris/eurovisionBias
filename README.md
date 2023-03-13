@@ -4,7 +4,7 @@ Distributional distances ranked from score data in the Eurovision song contest a
 Mantzaris, A. V., Rein, S. R., & Hopkins, A. D. (2018). Preference and neglect amongst countries in the Eurovision Song Contest. Journal of Computational Social Science, 1(2), 377-390.
 https://link.springer.com/article/10.1007/s42001-018-0020-2
 
-and is an extension of the code and research found in https://github.com/mantzaris/eurovision and published in http://jasss.soc.surrey.ac.uk/21/1/1.html
+and is an extension of the code and research found in https://github.com/mantzaris/eurovision and published in http://jasss.soc.surrey.ac.uk/21/1/1.html where this extension provides the bias sampling on both sides of the distribution. Key is that the preferential bias (positive bias) as well as the negative bias (neglect) are both accounted for here. Also that the investigation of the association of the amount of bias found from participants and their competition ranking is displayed as graphs. The results are also aggregated into name folders for the user.
 
 # The code for the paper "Preference and neglect amongst countries in the Eurovision Song Contest. in Journal of Computational Social Science
 
